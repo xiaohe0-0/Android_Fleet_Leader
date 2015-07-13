@@ -1,0 +1,6 @@
+<resources>
+    <string-array name="infoLevel">
+        <item>G</item>
+        <item>A</item>        
+    </string-array>
+</resources>
