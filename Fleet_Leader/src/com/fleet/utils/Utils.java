@@ -1,4 +1,4 @@
-package com.fleet.leader;
+package com.fleet.utils;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;

@@ -1,4 +1,4 @@
-package com.fleet.leader;
+package com.fleet.receiver;
 
 import java.util.List;
 
@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 import com.baidu.frontia.api.FrontiaPushMessageReceiver;
+import com.fleet.leader.MainActivity;
+import com.fleet.utils.Utils;
 
 /**
  * Push消息处理receiver。请编写您需要的回调函数， 一般来说： onBind是必须的，用来处理startWork返回值；

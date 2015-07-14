@@ -7,5 +7,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="lib" path="D:/MyPrograms/Android/Fleet_Leader/libs/pushservice-4.4.0.71.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/MyPrograms/Android/Fleet_Leader/libs/locSDK_5.02.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
