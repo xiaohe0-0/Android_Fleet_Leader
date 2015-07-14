@@ -997,12 +997,13 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f05002f;
         public static final int action_mode_bar_stub=0x7f05002e;
         public static final int action_mode_close_button=0x7f050022;
-        public static final int action_settings=0x7f050045;
+        public static final int action_settings=0x7f05004a;
         public static final int activity_chooser_view_content=0x7f050023;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
-        public static final int bmapView=0x7f050043;
-        public static final int btn_send=0x7f050044;
+        public static final int bmapView=0x7f050044;
+        public static final int btn_bind=0x7f050043;
+        public static final int btn_send=0x7f050049;
         public static final int checkbox=0x7f05002b;
         public static final int collapseActionView=0x7f05000d;
         public static final int default_activity_button=0x7f050026;
@@ -1030,6 +1031,8 @@ containing a value of this type.
         public static final int radio=0x7f05002d;
         public static final int right_container=0x7f050032;
         public static final int right_icon=0x7f050033;
+        public static final int scroll_all=0x7f050045;
+        public static final int scroll_group=0x7f050047;
         public static final int search_badge=0x7f050038;
         public static final int search_bar=0x7f050037;
         public static final int search_button=0x7f050039;
@@ -1047,6 +1050,8 @@ containing a value of this type.
         public static final int split_action_bar=0x7f05001c;
         public static final int submit_area=0x7f05003f;
         public static final int tabMode=0x7f050002;
+        public static final int text_all=0x7f050046;
+        public static final int text_group=0x7f050048;
         public static final int text_id=0x7f050042;
         public static final int title=0x7f050029;
         public static final int title_container=0x7f050030;

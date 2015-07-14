@@ -17,10 +17,17 @@
 
         <TextView
             android:id="@+id/text_id"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="id" >
         </TextView>
+         <Button
+            android:id="@+id/btn_bind"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:paddingTop="3dp"
+            android:textSize="13sp"
+            android:text="bind" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,14 +51,17 @@
         android:orientation="horizontal" >
 
         <ScrollView
+            android:id="@+id/scroll_all"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:fadeScrollbars="false" >
 
             <TextView
+                android:id="@+id/text_all"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="C\nc\nc\nc\nc\nc\nc\nc\nc\nc\nc\nc" >
+                android:text="" >
             </TextView>
         </ScrollView>
     </LinearLayout>
@@ -64,14 +74,17 @@
         android:orientation="horizontal" >
 
         <ScrollView
+            android:id="@+id/scroll_group"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent" 
+            android:fadeScrollbars="false">
 
             <TextView
+                android:id="@+id/text_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="777777777\nu\nu\nu\nu\nu\nu\nu\nu" >
+                android:text="" >
             </TextView>
         </ScrollView>
     </LinearLayout>
