@@ -21,6 +21,7 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.model.LatLng;
 import com.fleet.chat.R;
+import com.fleet.utils.HttpUtils;
 import com.fleet.utils.Utils;
 
 import android.support.v7.app.ActionBarActivity;
@@ -35,16 +36,22 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
+	// 常参
 	private String idPre = "本車身份：";
 	private String idName = "Leader";
 
+	private String postStr;
+
+	// Layout控件
 	private TextView text_id;
 	private TextView text_all;
 	private TextView text_group;
 	private Button btn_bind;
+	private Button btn_send;
 	private ScrollView scroll_all;
 	private ScrollView scroll_group;
 
+	// 百度地图
 	private MapView mMapView = null;
 	private BaiduMap mBaiduMap;
 
@@ -61,7 +68,9 @@ public class MainActivity extends ActionBarActivity {
 		// 在使用SDK各组件之前初始化context信息，传入ApplicationContext
 		// 注意该方法要再setContentView方法之前实现
 		SDKInitializer.initialize(getApplicationContext());
+
 		setContentView(R.layout.activity_main);
+
 		// 获取地图控件引用
 		mMapView = (MapView) findViewById(R.id.bmapView);
 		mBaiduMap = mMapView.getMap();
@@ -77,16 +86,39 @@ public class MainActivity extends ActionBarActivity {
 		option.setCoorType("bd09ll"); // 设置坐标类型
 		option.setScanSpan(100);
 		mLocClient.setLocOption(option);
-		mLocClient.start();		
+		mLocClient.start();
 
+		// 设置车辆身份
 		text_id = (TextView) this.findViewById(R.id.text_id);
 		text_id.setText(idPre + idName);
 
+		// 消息显示区域
 		text_all = (TextView) this.findViewById(R.id.text_all);
 		text_group = (TextView) this.findViewById(R.id.text_group);
 		scroll_all = (ScrollView) this.findViewById(R.id.scroll_all);
 		scroll_group = (ScrollView) this.findViewById(R.id.scroll_group);
 
+		// 发送消息
+		btn_send = (Button) this.findViewById(R.id.btn_send);
+		btn_send.setOnClickListener(new Button.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				new Thread() {
+					public void run() {
+						try {
+							postStr = HttpUtils.PostData();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						mHandler.sendEmptyMessage(2);
+					};
+				}.start();
+			}
+		});
+
+		// 绑定百度推送服务
 		btn_bind = (Button) this.findViewById(R.id.btn_bind);
 		btn_bind.setOnClickListener(new Button.OnClickListener() {
 			@Override
@@ -106,6 +138,21 @@ public class MainActivity extends ActionBarActivity {
 			}
 		});
 	}
+
+	Handler mHandler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+			case 1:
+
+				break;
+			case 2:
+				text_group.setText(postStr);
+				break;
+			default:
+				break;
+			}
+		};
+	};
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -158,6 +205,9 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
+	/**
+	 * 控制进度条自动滑到底端
+	 */
 	public static void scroll2Bottom(final ScrollView scroll, final View inner) {
 		Handler handler = new Handler();
 		handler.post(new Runnable() {
