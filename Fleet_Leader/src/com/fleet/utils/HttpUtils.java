@@ -31,34 +31,12 @@ public class HttpUtils {
 	 * 向服务器POST数据
 	 * @return
 	 */
-	public static String PostData() {
+	public static String PostData(List<NameValuePair> params) {
 		HttpClient client = new DefaultHttpClient();
 		StringBuilder builder = new StringBuilder();
 		HttpPost post = new HttpPost(path);
 		HttpResponse response;
 
-		JSONObject jsonObject1 = new JSONObject();// push_message消息体
-
-		// 添加消息内容
-		try {
-			jsonObject1.put("message_type", "text");
-			jsonObject1.put("src_tag", "leader");
-			jsonObject1.put("src_id", "2345");
-			jsonObject1.put("attr", "common");
-			jsonObject1.put("location", "test");
-			jsonObject1.put("push_type", "1");
-			jsonObject1.put("tag_name", "group");
-			jsonObject1.put("content", "Hi group. How are you?");
-			jsonObject1.put("user_id", "659120913597573883");
-		} catch (JSONException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-			return e2.toString();
-		}
-
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("push_message", jsonObject1
-				.toString()));// 封装消息实体
 		try {
 			post.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
 		} catch (UnsupportedEncodingException e1) {

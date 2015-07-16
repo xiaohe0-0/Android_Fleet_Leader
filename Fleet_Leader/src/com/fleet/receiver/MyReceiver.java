@@ -37,10 +37,19 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 	public void onBind(Context context, int errorCode, String appid,
 			String userId, String channelId, String requestId) {
 		// TODO Auto-generated method stub
-		String responseString = "onBind errorCode=" + errorCode + " appid="
-				+ appid + " userId=" + userId + " channelId=" + channelId
-				+ " requestId=" + requestId;
-		updateContent(context, responseString);
+//		String responseString = "onBind errorCode=" + errorCode + " appid="
+//				+ appid + " userId=" + userId + " channelId=" + channelId
+//				+ " requestId=" + requestId;
+		Utils.MyChannelId = channelId;
+		Utils.MyUserID = userId;
+		String bindResStr = "";
+		if (errorCode == 0) {
+			bindResStr = "Bind Successed!";
+		}
+		else {
+			bindResStr = "Bind Failed";
+		}
+		updateContent(context, bindResStr);
 	}
 
 	@Override
@@ -52,7 +61,7 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 				+ " requestId=" + requestId;
 
 		// Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
-		updateContent(context, responseString);
+		//updateContent(context, responseString);
 	}
 
 	@Override
@@ -127,7 +136,7 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 				+ " requestId=" + requestId;
 
 		// Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
-		updateContent(context, responseString);
+		//updateContent(context, responseString);
 	}
 
 	@Override

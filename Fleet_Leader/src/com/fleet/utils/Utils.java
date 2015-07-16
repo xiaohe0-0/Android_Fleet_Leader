@@ -9,6 +9,8 @@ import android.os.Bundle;
 public class Utils {
 	
 	public static String logString = "";
+	public static String MyChannelId = "";
+	public static String MyUserID = "";
 
 	public Utils() {
 		// TODO Auto-generated constructor stub

@@ -3,6 +3,11 @@ package com.fleet.leader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
 import com.baidu.frontia.api.FrontiaPushListener.PushMessageListener;
@@ -31,16 +36,30 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 	// 常参
 	private String idPre = "本車身份：";
 	private String idName = "Leader";
+	private String msgPre = "push_message";
+	private String apiKey = "TPO9PYH8sULRrUuYHyeCqX7e";
+	private String[] sendLevel = { "G", "A" };
+	private String[] sendTags = {"group","all"};
 
 	private String postStr;
+	private String selectedLevel;
+	private String sendTag;
+	private String sendStr;
 
 	// Layout控件
 	private TextView text_id;
@@ -50,6 +69,8 @@ public class MainActivity extends ActionBarActivity {
 	private Button btn_send;
 	private ScrollView scroll_all;
 	private ScrollView scroll_group;
+	private Spinner spin_level;
+	private EditText edit_send;
 
 	// 百度地图
 	private MapView mMapView = null;
@@ -70,6 +91,32 @@ public class MainActivity extends ActionBarActivity {
 		SDKInitializer.initialize(getApplicationContext());
 
 		setContentView(R.layout.activity_main);
+		edit_send = (EditText) this.findViewById(R.id.edit_send);
+
+		// 选择消息级别
+		spin_level = (Spinner) this.findViewById(R.id.spin_level);
+		spin_level.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				selectedLevel = (String) spin_level.getSelectedItem();
+				if(selectedLevel.equals(sendLevel[0])){
+					sendTag = sendTags[0];
+				}
+				if (selectedLevel.equals(sendLevel[1])) {
+					sendTag = sendTags[1];
+				}
+
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				selectedLevel = sendLevel[0];
+				sendTag = sendTags[0];
+			}
+		});
 
 		// 获取地图控件引用
 		mMapView = (MapView) findViewById(R.id.bmapView);
@@ -104,17 +151,53 @@ public class MainActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				new Thread() {
-					public void run() {
-						try {
-							postStr = HttpUtils.PostData();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						mHandler.sendEmptyMessage(2);
-					};
-				}.start();
+				sendStr = edit_send.getText().toString().trim();
+				if (sendStr.equals("")) {
+					Toast toast = Toast.makeText(getApplicationContext(),
+							"发送消息不能为空！", Toast.LENGTH_SHORT);
+					toast.show();
+				} else {
+					new Thread() {
+						public void run() {
+							JSONObject jsonObject1 = new JSONObject();// push_message消息体
+							List<NameValuePair> params = new ArrayList<NameValuePair>();
+							try {
+								if (selectedLevel.equals(sendLevel[0])) {// G
+									// 添加消息内容
+									try {
+										jsonObject1.put("message_type", "text");
+										jsonObject1.put("src_tag", "leader");
+										jsonObject1.put("src_id", "");
+										jsonObject1.put("attr", "common");
+										jsonObject1.put("location", "test");
+										jsonObject1.put("push_type", "2");
+										jsonObject1.put("tag_name", sendTag+"1");
+										jsonObject1.put("content",
+												sendStr);
+										jsonObject1.put("user_id",
+												Utils.MyUserID);
+									} catch (JSONException e2) {
+										// TODO Auto-generated catch block
+										e2.printStackTrace();
+									}
+									params.add(new BasicNameValuePair(
+											msgPre, jsonObject1
+													.toString()));// 封装消息实体
+								}
+								if (selectedLevel.equals(sendLevel[1])) {// A
+
+								}
+								mHandler.sendEmptyMessage(3);
+								postStr = HttpUtils.PostData(params);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							 mHandler.sendEmptyMessage(2);
+						};
+					}.start();
+				}
+
 			}
 		});
 
@@ -126,8 +209,7 @@ public class MainActivity extends ActionBarActivity {
 				// TODO Auto-generated method stub
 				// TODO Auto-generated method stub
 				PushManager.startWork(getApplicationContext(),
-						PushConstants.LOGIN_TYPE_API_KEY,
-						"TPO9PYH8sULRrUuYHyeCqX7e");
+						PushConstants.LOGIN_TYPE_API_KEY, apiKey);
 				List<String> list = new ArrayList<String>();
 				list.add("leader");
 				PushManager.setTags(getApplicationContext(), list);
@@ -147,6 +229,9 @@ public class MainActivity extends ActionBarActivity {
 				break;
 			case 2:
 				text_group.setText(postStr);
+				break;
+			case 3:
+				edit_send.setText("");
 				break;
 			default:
 				break;
