@@ -38,7 +38,7 @@ public class HttpUtils {
 		HttpResponse response;
 
 		try {
-			post.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+			post.setEntity(new UrlEncodedFormEntity(params,"utf-8"));
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 			return e1.toString();
