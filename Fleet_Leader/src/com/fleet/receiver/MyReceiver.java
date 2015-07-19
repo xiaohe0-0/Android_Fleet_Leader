@@ -1,6 +1,5 @@
 package com.fleet.receiver;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.json.JSONException;
@@ -38,9 +37,9 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 	public void onBind(Context context, int errorCode, String appid,
 			String userId, String channelId, String requestId) {
 		// TODO Auto-generated method stub
-		String responseString = "onBind errorCode=" + errorCode + " appid="
-				+ appid + " userId=" + userId + " channelId=" + channelId
-				+ " requestId=" + requestId;
+//		String responseString = "onBind errorCode=" + errorCode + " appid="
+//				+ appid + " userId=" + userId + " channelId=" + channelId
+//				+ " requestId=" + requestId;
 		Utils.MyChannelId = channelId;
 		Utils.MyUserID = userId;
 		String bindResStr = "";
@@ -50,7 +49,7 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 		else {
 			bindResStr = "Bind Failed";
 		}
-		updateContent(context, responseString + "\n"+bindResStr);
+		updateContent(context, bindResStr);
 	}
 
 	@Override
@@ -62,7 +61,7 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 				+ " requestId=" + requestId;
 
 		// Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
-		updateContent(context, responseString);
+		//updateContent(context, responseString);
 	}
 
 	@Override
@@ -137,7 +136,7 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 				+ " requestId=" + requestId;
 
 		// Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
-		updateContent(context, responseString);
+		//updateContent(context, responseString);
 	}
 
 	@Override
@@ -154,12 +153,7 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 		Intent intent = new Intent(context.getApplicationContext(),
 				MainActivity.class);
 		// intent.putExtra("result", content);
-		try {
-			Utils.logString = new String(content.getBytes(), "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			Utils.logString = e.toString();
-		}
+		Utils.logString = content;
 		// intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.getApplicationContext().startActivity(intent);
