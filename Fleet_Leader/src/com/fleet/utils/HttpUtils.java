@@ -48,11 +48,12 @@ public class HttpUtils {
 		try {
 			response = client.execute(post);
 			HttpEntity entity = response.getEntity();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					entity.getContent()));
-			for (String s = reader.readLine(); s != null; s = reader.readLine()) {
-				builder.append(s);
-			}
+//			BufferedReader reader = new BufferedReader(new InputStreamReader(
+//					entity.getContent()));
+//			for (String s = reader.readLine(); s != null; s = reader.readLine()) {
+//				builder.append(s);
+//			}
+			builder.append(response.getStatusLine().getStatusCode());
 			return builder.toString();
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block

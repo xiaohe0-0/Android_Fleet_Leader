@@ -8,9 +8,12 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.ActionBarDrawerToggle.Delegate;
 import android.text.TextUtils;
+import android.util.JsonReader;
 
 import com.baidu.frontia.api.FrontiaPushMessageReceiver;
+import com.fleet.domain.DeliverMsg;
 import com.fleet.leader.MainActivity;
 import com.fleet.utils.Utils;
 
@@ -43,32 +46,34 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 				+ " requestId=" + requestId;
 		Utils.MyChannelId = channelId;
 		Utils.MyUserID = userId;
+		Utils.deliverMsg = new DeliverMsg();
 		String bindResStr = "";
 		if (errorCode == 0) {
 			bindResStr = "Bind Successed!";
-		}
-		else {
+		} else {
 			bindResStr = "Bind Failed";
 		}
-		updateContent(context, responseString + "\n"+bindResStr);
+		updateContent(context, bindResStr);
 	}
 
 	@Override
 	public void onDelTags(Context context, int errorCode,
 			List<String> sucessTags, List<String> failTags, String requestId) {
 		// TODO Auto-generated method stub
+		Utils.deliverMsg = new DeliverMsg();
 		String responseString = "onDelTags errorCode=" + errorCode
 				+ " sucessTags=" + sucessTags + " failTags=" + failTags
 				+ " requestId=" + requestId;
 
 		// Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
-		updateContent(context, responseString);
+		// updateContent(context, responseString);
 	}
 
 	@Override
 	public void onListTags(Context context, int errorCode, List<String> tags,
 			String requestId) {
 		// TODO Auto-generated method stub
+		Utils.deliverMsg = new DeliverMsg();
 		String responseString = "onListTags errorCode=" + errorCode + " tags="
 				+ tags;
 
@@ -82,24 +87,44 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 		// TODO Auto-generated method stub
 		String messageString = "透传消息 message=\"" + message
 				+ "\" customContentString=" + customContentString;
-
-		// 自定义内容获取方式，mykey和myvalue对应透传消息推送时自定义内容中设置的键和值
-		if (!TextUtils.isEmpty(customContentString)) {
-			JSONObject customJson = null;
+		Utils.deliverMsg = new DeliverMsg();
+		JSONObject jsonObject = new JSONObject();
+		if (!TextUtils.isEmpty(message)) {
 			try {
-				customJson = new JSONObject(customContentString);
-				String myvalue = null;
-				if (customJson.isNull("mykey")) {
-					myvalue = customJson.getString("mykey");
-				}
-			} catch (JSONException e) {
+				jsonObject = new JSONObject(message);
+				Utils.deliverMsg.setMessage_type(jsonObject
+						.getString("message_type"));
+				Utils.deliverMsg.setAttr(jsonObject.getString("attr"));
+				Utils.deliverMsg.setContent(jsonObject.getString("content"));
+				Utils.deliverMsg.setSrc_tag(jsonObject.getString("src_tag"));
+				Utils.deliverMsg.setLocation(jsonObject.getString("location"));
+
+				// Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
+				updateContent(context, Utils.deliverMsg.getContent());
+				//updateContent(context, Utils.deliverMsg.getContent());
+				//updateContent(context, messageString);
+			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e1.printStackTrace();
+				updateContent(context, e1.toString());
 			}
 		}
 
-		// Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
-		updateContent(context, messageString);
+
+		// 自定义内容获取方式，mykey和myvalue对应透传消息推送时自定义内容中设置的键和值
+		// if (!TextUtils.isEmpty(customContentString)) {
+		// JSONObject customJson = null;
+		// try {
+		// customJson = new JSONObject(customContentString);
+		// String myvalue = null;
+		// if (customJson.isNull("mykey")) {
+		// myvalue = customJson.getString("mykey");
+		// }
+		// } catch (JSONException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
 	}
 
 	@Override
@@ -108,6 +133,7 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 		// TODO Auto-generated method stub
 		String notifyString = "通知点击 title=\"" + title + "\" description=\""
 				+ description + "\" customContent=" + customContentString;
+		Utils.deliverMsg = new DeliverMsg();
 
 		// 自定义内容获取方式，mykey和myvalue对应通知推送时自定义内容中设置的键和值
 		if (!TextUtils.isEmpty(customContentString)) {
@@ -135,9 +161,10 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 		String responseString = "onSetTags errorCode=" + errorCode
 				+ " sucessTags=" + sucessTags + " failTags=" + failTags
 				+ " requestId=" + requestId;
+		Utils.deliverMsg = new DeliverMsg();
 
 		// Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
-		updateContent(context, responseString);
+		// updateContent(context, responseString);
 	}
 
 	@Override
@@ -145,6 +172,7 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 		// TODO Auto-generated method stub
 		String responseString = "onUnbind errorCode=" + errorCode
 				+ " requestId = " + requestId;
+		Utils.deliverMsg = new DeliverMsg();
 		// Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
 		updateContent(context, responseString);
 	}
@@ -164,4 +192,5 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.getApplicationContext().startActivity(intent);
 	}
+	
 }

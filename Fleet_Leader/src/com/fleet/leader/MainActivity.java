@@ -61,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
 	private String msgPre = "push_message";
 	private String apiKey = "TPO9PYH8sULRrUuYHyeCqX7e";
 	private String[] sendLevel = { "G", "A" };
-	private String[] sendTags = {"group","all"};
+	private String[] sendTags = { "group", "all" };
 
 	private String postStr;
 	private String selectedLevel;
@@ -73,7 +73,6 @@ public class MainActivity extends ActionBarActivity {
 	private TextView text_id;
 	private TextView text_all;
 	private TextView text_group;
-	private Button btn_bind;
 	private Button btn_send;
 	private ScrollView scroll_all;
 	private ScrollView scroll_group;
@@ -84,7 +83,7 @@ public class MainActivity extends ActionBarActivity {
 	private MapView mMapView = null;
 	private BaiduMap mBaiduMap;
 	private Marker marker[];
-	private BitmapDescriptor bitmapDescriptor;	
+	private BitmapDescriptor bitmapDescriptor;
 
 	// 定位相关
 	private LocationClient mLocClient;
@@ -111,7 +110,7 @@ public class MainActivity extends ActionBarActivity {
 					int arg2, long arg3) {
 				// TODO Auto-generated method stub
 				selectedLevel = (String) spin_level.getSelectedItem();
-				if(selectedLevel.equals(sendLevel[0])){
+				if (selectedLevel.equals(sendLevel[0])) {
 					sendTag = sendTags[0];
 				}
 				if (selectedLevel.equals(sendLevel[1])) {
@@ -145,27 +144,34 @@ public class MainActivity extends ActionBarActivity {
 		option.setScanSpan(100);
 		mLocClient.setLocOption(option);
 		mLocClient.start();
-		
-		LatLng tmploc = new LatLng(myLatLng.latitude+Math.random()/30, myLatLng.longitude+Math.random()/30);		
+
+		LatLng tmploc = new LatLng(myLatLng.latitude + Math.random() / 30,
+				myLatLng.longitude + Math.random() / 30);
 		final LocationOfCar locations[] = new LocationOfCar[4];
 		locations[0] = new LocationOfCar("car1", "2013.06.06", tmploc);
-		tmploc = new LatLng(myLatLng.latitude-Math.random()/20, myLatLng.longitude+Math.random()/40);
+		tmploc = new LatLng(myLatLng.latitude - Math.random() / 20,
+				myLatLng.longitude + Math.random() / 40);
 		locations[1] = new LocationOfCar("car2", "2014.06.06", tmploc);
-		tmploc = new LatLng(myLatLng.latitude+Math.random()/10, myLatLng.longitude+Math.random()/60);
+		tmploc = new LatLng(myLatLng.latitude + Math.random() / 10,
+				myLatLng.longitude + Math.random() / 60);
 		locations[2] = new LocationOfCar("car3", "2013.04.02", tmploc);
-		tmploc = new LatLng(myLatLng.latitude+Math.random()/40, myLatLng.longitude+Math.random()/20);
+		tmploc = new LatLng(myLatLng.latitude + Math.random() / 40,
+				myLatLng.longitude + Math.random() / 20);
 		locations[3] = new LocationOfCar("car4", "2013.04.02", tmploc);
-		
-		bitmapDescriptor  = BitmapDescriptorFactory.fromResource(R.drawable.icon_member);
+
+		bitmapDescriptor = BitmapDescriptorFactory
+				.fromResource(R.drawable.icon_member);
 		initOverlay(locations);
-		
-			
+
 		final LocationOfCar locations1[] = new LocationOfCar[2];
-		tmploc = new LatLng(myLatLng.latitude+Math.random()/15, myLatLng.longitude+Math.random()/45);	
+		tmploc = new LatLng(myLatLng.latitude + Math.random() / 15,
+				myLatLng.longitude + Math.random() / 45);
 		locations1[0] = new LocationOfCar("group1", "2013.06.06", tmploc);
-		tmploc = new LatLng(myLatLng.latitude+Math.random()/25, myLatLng.longitude+Math.random()/35);
+		tmploc = new LatLng(myLatLng.latitude + Math.random() / 25,
+				myLatLng.longitude + Math.random() / 35);
 		locations1[1] = new LocationOfCar("group1", "2013.06.06", tmploc);
-		bitmapDescriptor  = BitmapDescriptorFactory.fromResource(R.drawable.icon_group);
+		bitmapDescriptor = BitmapDescriptorFactory
+				.fromResource(R.drawable.icon_group);
 		initOverlay(locations1);
 
 		// 设置车辆身份
@@ -204,29 +210,34 @@ public class MainActivity extends ActionBarActivity {
 										jsonObject1.put("attr", "common");
 										jsonObject1.put("location", "test");
 										jsonObject1.put("push_type", "2");
-										jsonObject1.put("tag_name", sendTag+"2");
-										jsonObject1.put("content",
-												sendStr);
+										jsonObject1.put("tag_name", sendTag
+												+ "2");
+										jsonObject1.put("content", sendStr);
 										jsonObject1.put("user_id",
 												Utils.MyUserID);
 									} catch (JSONException e2) {
 										// TODO Auto-generated catch block
 										e2.printStackTrace();
 									}
-									params.add(new BasicNameValuePair(
-											msgPre, jsonObject1
-													.toString()));// 封装消息实体
+									params.add(new BasicNameValuePair(msgPre,
+											jsonObject1.toString()));// 封装消息实体
 								}
 								if (selectedLevel.equals(sendLevel[1])) {// A
 
 								}
 								mHandler.sendEmptyMessage(3);
-								postStr = HttpUtils.PostData(params);
+								String resFromServer = HttpUtils
+										.PostData(params);
+								postStr = "Send OK";
+								if (!resFromServer.equals("200")) {
+									postStr = "Send Failed";
+								}
+
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							 mHandler.sendEmptyMessage(2);
+							mHandler.sendEmptyMessage(2);
 						};
 					}.start();
 				}
@@ -235,12 +246,8 @@ public class MainActivity extends ActionBarActivity {
 		});
 
 		// 绑定百度推送服务
-		btn_bind = (Button) this.findViewById(R.id.btn_bind);
-		btn_bind.setOnClickListener(new Button.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				// TODO Auto-generated method stub
+		new Thread(){
+			public void run() {
 				PushManager.startWork(getApplicationContext(),
 						PushConstants.LOGIN_TYPE_API_KEY, apiKey);
 				List<String> list = new ArrayList<String>();
@@ -250,8 +257,8 @@ public class MainActivity extends ActionBarActivity {
 				delList.add("group");
 				delList.add("member");
 				PushManager.delTags(getApplicationContext(), delList);
-			}
-		});
+			};
+		}.start();
 	}
 
 	Handler mHandler = new Handler() {
@@ -317,9 +324,16 @@ public class MainActivity extends ActionBarActivity {
 
 	protected void onNewIntent(Intent intent) {
 		// TODO Auto-generated method stub
-		if (Utils.logString != "") {
-			text_all.append(Utils.logString + "\n");
-			scroll2Bottom(scroll_all, text_all);			
+		if (Utils.deliverMsg.getSrc_tag().equals("")) {
+			if (!Utils.logString.equals("")) {
+				text_all.append(Utils.logString + "\n");
+				scroll2Bottom(scroll_all, text_all);
+			}
+		} else {
+			if (Utils.deliverMsg.getSrc_tag().contains("group")) {
+				text_group.append(Utils.deliverMsg.getSrc_tag() + ":"+ Utils.logString + "\n");
+				scroll2Bottom(scroll_group, text_group);
+			}
 		}
 	}
 
@@ -354,7 +368,7 @@ public class MainActivity extends ActionBarActivity {
 			// map view 销毁后不在处理新接收的位置
 			if (location == null || mMapView == null)
 				return;
-			
+
 			MyLocationData locData = new MyLocationData.Builder()
 					.accuracy(location.getRadius())
 					// 此处设置开发者获取到的方向信息，顺时针0-360
@@ -373,48 +387,54 @@ public class MainActivity extends ActionBarActivity {
 		public void onReceivePoi(BDLocation poiLocation) {
 		}
 	}
-	
-	//地图标记
-	public void initOverlay(LocationOfCar locations[]){
+
+	// 地图标记
+	public void initOverlay(LocationOfCar locations[]) {
 		int count = locations.length;
 		LatLng latLngs;
-//		LatLngBounds bounds = null;
-//		double min_latitude = 0, min_longitude = 0,
-//				max_latitude = 0, max_longitude = 0;
-//		
-//		for(int i = 0; i < count-1; i++){
-//			if(locations[i].getLocation().latitude <= locations[i+1].getLocation().latitude){
-//				min_latitude = locations[i].getLocation().latitude;
-//				max_latitude = locations[i+1].getLocation().latitude;
-//			}
-//			else {
-//				min_latitude = locations[i+1].getLocation().latitude;
-//				max_latitude = locations[i].getLocation().latitude;
-//			}
-//			if(locations[i].getLocation().longitude <= locations[i+1].getLocation().longitude){
-//				min_longitude = locations[i].getLocation().longitude;
-//				max_longitude = locations[i+1].getLocation().longitude;
-//			}
-//			else {
-//				min_longitude = locations[i+1].getLocation().longitude;
-//				max_longitude = locations[i].getLocation().longitude;
-//			}
-//		}
+		// LatLngBounds bounds = null;
+		// double min_latitude = 0, min_longitude = 0,
+		// max_latitude = 0, max_longitude = 0;
+		//
+		// for(int i = 0; i < count-1; i++){
+		// if(locations[i].getLocation().latitude <=
+		// locations[i+1].getLocation().latitude){
+		// min_latitude = locations[i].getLocation().latitude;
+		// max_latitude = locations[i+1].getLocation().latitude;
+		// }
+		// else {
+		// min_latitude = locations[i+1].getLocation().latitude;
+		// max_latitude = locations[i].getLocation().latitude;
+		// }
+		// if(locations[i].getLocation().longitude <=
+		// locations[i+1].getLocation().longitude){
+		// min_longitude = locations[i].getLocation().longitude;
+		// max_longitude = locations[i+1].getLocation().longitude;
+		// }
+		// else {
+		// min_longitude = locations[i+1].getLocation().longitude;
+		// max_longitude = locations[i].getLocation().longitude;
+		// }
+		// }
 		marker = new Marker[count];
-		for(int i = 0; i < count; i++){
+		for (int i = 0; i < count; i++) {
 			latLngs = locations[i].getLocation();
-			OverlayOptions overlayOptions_marker = new MarkerOptions().position(latLngs).icon(bitmapDescriptor);
-			marker[i] = (Marker)(mBaiduMap.addOverlay(overlayOptions_marker));
+			OverlayOptions overlayOptions_marker = new MarkerOptions()
+					.position(latLngs).icon(bitmapDescriptor);
+			marker[i] = (Marker) (mBaiduMap.addOverlay(overlayOptions_marker));
 		}
-//		LatLng southwest = new LatLng(min_latitude, min_longitude);
-//		LatLng northeast = new LatLng(max_latitude, max_longitude);
-//		LatLng northwest = new LatLng(max_latitude, min_longitude);
-//		LatLng southeast = new LatLng(min_latitude, max_longitude);
-//
-//		bounds = new LatLngBounds.Builder().include(northeast).include(southwest).include(southeast).include(northwest).build();
-//		MapStatusUpdate mapStatusUpdate = MapStatusUpdateFactory.newLatLngBounds(bounds);
-//		mBaiduMap.animateMapStatus(mapStatusUpdate,1000);
-		//MapStatusUpdate mapStatusUpdate_zoom = MapStatusUpdateFactory.zoomTo(10);
-		//mBaiduMap.setMapStatus(mapStatusUpdate_zoom);
+		// LatLng southwest = new LatLng(min_latitude, min_longitude);
+		// LatLng northeast = new LatLng(max_latitude, max_longitude);
+		// LatLng northwest = new LatLng(max_latitude, min_longitude);
+		// LatLng southeast = new LatLng(min_latitude, max_longitude);
+		//
+		// bounds = new
+		// LatLngBounds.Builder().include(northeast).include(southwest).include(southeast).include(northwest).build();
+		// MapStatusUpdate mapStatusUpdate =
+		// MapStatusUpdateFactory.newLatLngBounds(bounds);
+		// mBaiduMap.animateMapStatus(mapStatusUpdate,1000);
+		// MapStatusUpdate mapStatusUpdate_zoom =
+		// MapStatusUpdateFactory.zoomTo(10);
+		// mBaiduMap.setMapStatus(mapStatusUpdate_zoom);
 	}
 }

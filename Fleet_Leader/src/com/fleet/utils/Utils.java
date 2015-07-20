@@ -1,5 +1,7 @@
 package com.fleet.utils;
 
+import com.fleet.domain.DeliverMsg;
+
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -9,8 +11,10 @@ import android.os.Bundle;
 public class Utils {
 	
 	public static String logString = "";
+	public static String logLocation = "";
 	public static String MyChannelId = "";
 	public static String MyUserID = "";
+	public static DeliverMsg deliverMsg;
 
 	public Utils() {
 		// TODO Auto-generated constructor stub
