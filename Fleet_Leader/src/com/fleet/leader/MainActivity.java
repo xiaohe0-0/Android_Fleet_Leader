@@ -1,7 +1,9 @@
 package com.fleet.leader;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -56,8 +58,8 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 	// 常参
-	private String idPre = "本車身份：";
-	private String idName = "Leader";
+	//private String idPre = "本車身份：";
+	//private String idName = "Leader";
 	private String msgPre = "push_message";
 	private String apiKey = "TPO9PYH8sULRrUuYHyeCqX7e";
 	private String[] sendLevel = { "G", "A" };
@@ -68,9 +70,10 @@ public class MainActivity extends ActionBarActivity {
 	private String sendTag;
 	private String sendStr;
 	private LatLng myLatLng;
+	private List<LocationOfCar> locs;
 
 	// Layout控件
-	private TextView text_id;
+	//private TextView text_id;
 	private TextView text_all;
 	private TextView text_group;
 	private Button btn_send;
@@ -83,6 +86,7 @@ public class MainActivity extends ActionBarActivity {
 	private MapView mMapView = null;
 	private BaiduMap mBaiduMap;
 	private Marker marker[];
+	private List<Marker> locMarkers;
 	private BitmapDescriptor bitmapDescriptor;
 
 	// 定位相关
@@ -145,38 +149,52 @@ public class MainActivity extends ActionBarActivity {
 		mLocClient.setLocOption(option);
 		mLocClient.start();
 
-		LatLng tmploc = new LatLng(myLatLng.latitude + Math.random() / 30,
-				myLatLng.longitude + Math.random() / 30);
-		final LocationOfCar locations[] = new LocationOfCar[4];
-		locations[0] = new LocationOfCar("car1", "2013.06.06", tmploc);
-		tmploc = new LatLng(myLatLng.latitude - Math.random() / 20,
-				myLatLng.longitude + Math.random() / 40);
-		locations[1] = new LocationOfCar("car2", "2014.06.06", tmploc);
-		tmploc = new LatLng(myLatLng.latitude + Math.random() / 10,
-				myLatLng.longitude + Math.random() / 60);
-		locations[2] = new LocationOfCar("car3", "2013.04.02", tmploc);
-		tmploc = new LatLng(myLatLng.latitude + Math.random() / 40,
-				myLatLng.longitude + Math.random() / 20);
-		locations[3] = new LocationOfCar("car4", "2013.04.02", tmploc);
-
+		LatLng tmploc = new LatLng(myLatLng.latitude - Math.random() / 40,
+				myLatLng.longitude + Math.random() / 22);
+		locs = new ArrayList<LocationOfCar>();
+		locMarkers = new ArrayList<Marker>();
+		LocationOfCar tmpLocar = new LocationOfCar("Run", "123", tmploc);
+		locs.add(tmpLocar);
+		tmploc = new LatLng(myLatLng.latitude - Math.random() / 30,
+				myLatLng.longitude - Math.random() / 22);
+		tmpLocar = new LocationOfCar("Run1", "1232", tmploc);
+		locs.add(tmpLocar);
 		bitmapDescriptor = BitmapDescriptorFactory
 				.fromResource(R.drawable.icon_member);
-		initOverlay(locations);
+		setLocations(locs);
 
-		final LocationOfCar locations1[] = new LocationOfCar[2];
-		tmploc = new LatLng(myLatLng.latitude + Math.random() / 15,
-				myLatLng.longitude + Math.random() / 45);
-		locations1[0] = new LocationOfCar("group1", "2013.06.06", tmploc);
-		tmploc = new LatLng(myLatLng.latitude + Math.random() / 25,
-				myLatLng.longitude + Math.random() / 35);
-		locations1[1] = new LocationOfCar("group1", "2013.06.06", tmploc);
-		bitmapDescriptor = BitmapDescriptorFactory
-				.fromResource(R.drawable.icon_group);
-		initOverlay(locations1);
+		// final LocationOfCar locations[] = new LocationOfCar[4];
+		// tmploc = new LatLng(myLatLng.latitude + Math.random() / 30,
+		// myLatLng.longitude + Math.random() / 30);
+		// locations[0] = new LocationOfCar("car1", "2013.06.06", tmploc);
+		// tmploc = new LatLng(myLatLng.latitude - Math.random() / 20,
+		// myLatLng.longitude + Math.random() / 40);
+		// locations[1] = new LocationOfCar("car2", "2014.06.06", tmploc);
+		// tmploc = new LatLng(myLatLng.latitude + Math.random() / 10,
+		// myLatLng.longitude + Math.random() / 60);
+		// locations[2] = new LocationOfCar("car3", "2013.04.02", tmploc);
+		// tmploc = new LatLng(myLatLng.latitude + Math.random() / 40,
+		// myLatLng.longitude + Math.random() / 20);
+		// locations[3] = new LocationOfCar("car4", "2013.04.02", tmploc);
+		//
+		// bitmapDescriptor = BitmapDescriptorFactory
+		// .fromResource(R.drawable.icon_member);
+		// initOverlay(locations);
+		//
+		// final LocationOfCar locations1[] = new LocationOfCar[2];
+		// tmploc = new LatLng(myLatLng.latitude + Math.random() / 15,
+		// myLatLng.longitude + Math.random() / 45);
+		// locations1[0] = new LocationOfCar("group1", "2013.06.06", tmploc);
+		// tmploc = new LatLng(myLatLng.latitude + Math.random() / 25,
+		// myLatLng.longitude + Math.random() / 35);
+		// locations1[1] = new LocationOfCar("group1", "2013.06.06", tmploc);
+		// bitmapDescriptor = BitmapDescriptorFactory
+		// .fromResource(R.drawable.icon_group);
+		// initOverlay(locations1);
 
 		// 设置车辆身份
-		text_id = (TextView) this.findViewById(R.id.text_id);
-		text_id.setText(idPre + idName);
+		//text_id = (TextView) this.findViewById(R.id.text_id);
+		//text_id.setText(idPre + idName);
 
 		// 消息显示区域
 		text_all = (TextView) this.findViewById(R.id.text_all);
@@ -206,38 +224,78 @@ public class MainActivity extends ActionBarActivity {
 									try {
 										jsonObject1.put("message_type", "text");
 										jsonObject1.put("src_tag", "leader");
-										jsonObject1.put("src_id", "");
+										jsonObject1.put("src_id",
+												Utils.MyChannelId);
 										jsonObject1.put("attr", "common");
-										jsonObject1.put("location", "test");
+										jsonObject1.put("location", "");
 										jsonObject1.put("push_type", "2");
 										jsonObject1.put("tag_name", sendTag
 												+ "2");
 										jsonObject1.put("content", sendStr);
 										jsonObject1.put("user_id",
 												Utils.MyUserID);
+										params.add(new BasicNameValuePair(
+												msgPre, jsonObject1.toString()));// 封装消息实体
+										mHandler.sendEmptyMessage(3);
+										String resFromServer = HttpUtils
+												.PostData(params);
+										if (!resFromServer.equals("200")) {
+											postStr = "Send Failed";
+											mHandler.sendEmptyMessage(2);
+										}
 									} catch (JSONException e2) {
 										// TODO Auto-generated catch block
 										e2.printStackTrace();
+										postStr = e2.toString();
+										mHandler.sendEmptyMessage(2);
+									} catch (Exception e) {
+										// TODO: handle exception
+										postStr = e.toString();
+										mHandler.sendEmptyMessage(2);
 									}
-									params.add(new BasicNameValuePair(msgPre,
-											jsonObject1.toString()));// 封装消息实体
-								}
-								if (selectedLevel.equals(sendLevel[1])) {// A
 
 								}
-								mHandler.sendEmptyMessage(3);
-								String resFromServer = HttpUtils
-										.PostData(params);
-								postStr = "Send OK";
-								if (!resFromServer.equals("200")) {
-									postStr = "Send Failed";
+								if (selectedLevel.equals(sendLevel[1])) {// A
+									// 添加消息内容
+									try {
+										jsonObject1.put("message_type", "text");
+										jsonObject1.put("src_tag", "leader");
+										jsonObject1.put("src_id",
+												Utils.MyChannelId);
+										jsonObject1.put("attr", "common");
+										jsonObject1.put("location", "");
+										jsonObject1.put("push_type", "3");
+										jsonObject1.put("tag_name", "");
+										jsonObject1.put("content", sendStr);
+										jsonObject1.put("user_id",
+												Utils.MyUserID);
+										params.add(new BasicNameValuePair(
+												msgPre, jsonObject1.toString()));// 封装消息实体
+										mHandler.sendEmptyMessage(5);
+										String resFromServer = HttpUtils
+												.PostData(params);
+										if (!resFromServer.equals("200")) {
+											postStr = "Send Failed"
+													+ resFromServer;
+											mHandler.sendEmptyMessage(4);
+										}
+									} catch (JSONException e2) {
+										// TODO Auto-generated catch block
+										e2.printStackTrace();
+										postStr = e2.toString();
+										mHandler.sendEmptyMessage(4);
+									} catch (Exception e) {
+										// TODO: handle exception
+										postStr = e.toString();
+										mHandler.sendEmptyMessage(4);
+									}
 								}
 
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							mHandler.sendEmptyMessage(2);
+
 						};
 					}.start();
 				}
@@ -246,7 +304,7 @@ public class MainActivity extends ActionBarActivity {
 		});
 
 		// 绑定百度推送服务
-		new Thread(){
+		new Thread() {
 			public void run() {
 				PushManager.startWork(getApplicationContext(),
 						PushConstants.LOGIN_TYPE_API_KEY, apiKey);
@@ -263,16 +321,27 @@ public class MainActivity extends ActionBarActivity {
 
 	Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
+			Date now = new Date();
+			SimpleDateFormat df = new SimpleDateFormat("[HH:mm:ss] ");// 设置日期格式
 			switch (msg.what) {
 			case 1:
 
 				break;
 			case 2:
-				text_group.setText(postStr);
+				text_group.append(df.format(now) + postStr + "\n");
 				break;
 			case 3:
+				text_group.append(df.format(now) + "Leader:"
+						+ edit_send.getText() + "\n");
 				edit_send.setText("");
 				break;
+			case 4:
+				text_all.append(df.format(now) + postStr + "\n");
+				break;
+			case 5:
+				text_all.append(df.format(now) + "Leader:"
+						+ edit_send.getText() + "\n");
+				edit_send.setText("");
 			default:
 				break;
 			}
@@ -324,17 +393,22 @@ public class MainActivity extends ActionBarActivity {
 
 	protected void onNewIntent(Intent intent) {
 		// TODO Auto-generated method stub
+		Date now = new Date();
+		SimpleDateFormat df = new SimpleDateFormat("[HH:mm:ss] ");// 设置日期格式
 		if (Utils.deliverMsg.getSrc_tag().equals("")) {
 			if (!Utils.logString.equals("")) {
-				text_all.append(Utils.logString + "\n");
+				text_all.append(df.format(now) + Utils.logString + "\n");
 				scroll2Bottom(scroll_all, text_all);
 			}
 		} else {
 			if (Utils.deliverMsg.getSrc_tag().contains("group")) {
-				text_group.append(Utils.deliverMsg.getSrc_tag() + ":"+ Utils.logString + "\n");
+				text_group.append(df.format(now)
+						+ Utils.deliverMsg.getSrc_tag() + ":" + Utils.logString
+						+ "\n");
 				scroll2Bottom(scroll_group, text_group);
 			}
 		}
+		// text_all.append(Utils.logString + "\n");
 	}
 
 	/**
@@ -388,6 +462,21 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
+	public void setLocations(List<LocationOfCar> locationList) {
+		// marker = new Marker[locationList.size()];
+		locMarkers = new ArrayList<Marker>();
+		LatLng latLngs;
+		for (int i = 0; i < locationList.size(); i++) {
+			latLngs = locationList.get(i).getLocation();
+			OverlayOptions overlayOptions_marker = new MarkerOptions()
+					.position(latLngs).icon(bitmapDescriptor);
+			// marker[i] = (Marker)
+			// (mBaiduMap.addOverlay(overlayOptions_marker));
+			locMarkers.add((Marker) (mBaiduMap
+					.addOverlay(overlayOptions_marker)));
+		}
+	}
+
 	// 地图标记
 	public void initOverlay(LocationOfCar locations[]) {
 		int count = locations.length;
@@ -423,6 +512,7 @@ public class MainActivity extends ActionBarActivity {
 					.position(latLngs).icon(bitmapDescriptor);
 			marker[i] = (Marker) (mBaiduMap.addOverlay(overlayOptions_marker));
 		}
+
 		// LatLng southwest = new LatLng(min_latitude, min_longitude);
 		// LatLng northeast = new LatLng(max_latitude, max_longitude);
 		// LatLng northwest = new LatLng(max_latitude, min_longitude);

@@ -19,20 +19,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/text_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="id" >
-            </TextView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="227dp"
             android:background="#DFDFDF"
             android:orientation="horizontal" >
 
@@ -47,7 +34,11 @@
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_marginTop="5dp"
-            android:background="#DFDFDF"
+            android:background="@drawable/bg_broadcast"
+            android:paddingLeft="2dp"
+            android:paddingBottom="2dp"
+            android:paddingRight="2dp"
+            android:paddingTop="2dp"
             android:orientation="horizontal" >
 
             <ScrollView
@@ -70,7 +61,11 @@
             android:layout_width="match_parent"
             android:layout_height="130dp"
             android:layout_marginTop="5dp"
-            android:background="#DFDFDF"
+            android:background="@drawable/bg_group"
+            android:paddingLeft="2dp"
+            android:paddingBottom="2dp"
+            android:paddingRight="2dp"
+            android:paddingTop="2dp"
             android:orientation="horizontal" >
 
             <ScrollView
@@ -106,16 +101,17 @@
                 android:id="@+id/edit_send"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.45"
+                android:layout_weight="0.4"
                 android:text=" " >
             </EditText>
 
             <Button
                 android:id="@+id/btn_send"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="0.95"
-                android:text="Send" >
+                android:text="Send"
+                android:textSize="17sp" >
             </Button>
         </LinearLayout>
     </LinearLayout>

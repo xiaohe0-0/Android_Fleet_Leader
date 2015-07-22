@@ -1,6 +1,8 @@
 package com.fleet.receiver;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -98,6 +100,7 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 				Utils.deliverMsg.setContent(jsonObject.getString("content"));
 				Utils.deliverMsg.setSrc_tag(jsonObject.getString("src_tag"));
 				Utils.deliverMsg.setLocation(jsonObject.getString("location"));
+				Utils.deliverMsg.setPush_type(jsonObject.getString("push_type"));
 
 				// Demo更新界面展示代码，应用请在这里加入自己的处理逻辑
 				updateContent(context, Utils.deliverMsg.getContent());
@@ -179,16 +182,16 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 
 	private void updateContent(Context context, String content) {
 		// TODO Auto-generated method stub
+		
+		
 		Intent intent = new Intent(context.getApplicationContext(),
 				MainActivity.class);
-		// intent.putExtra("result", content);
 		try {
 			Utils.logString = new String(content.getBytes(), "utf-8");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			Utils.logString = e.toString();
 		}
-		// intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.getApplicationContext().startActivity(intent);
 	}
