@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.security.auth.PrivateCredentialPermission;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -40,6 +42,8 @@ import com.fleet.utils.Utils;
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -58,8 +62,8 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 	// 常参
-	//private String idPre = "本車身份：";
-	//private String idName = "Leader";
+	// private String idPre = "本車身份：";
+	// private String idName = "Leader";
 	private String msgPre = "push_message";
 	private String apiKey = "TPO9PYH8sULRrUuYHyeCqX7e";
 	private String[] sendLevel = { "G", "A" };
@@ -73,7 +77,7 @@ public class MainActivity extends ActionBarActivity {
 	private List<LocationOfCar> locs;
 
 	// Layout控件
-	//private TextView text_id;
+	// private TextView text_id;
 	private TextView text_all;
 	private TextView text_group;
 	private Button btn_send;
@@ -134,9 +138,12 @@ public class MainActivity extends ActionBarActivity {
 
 		// 获取地图控件引用
 		mMapView = (MapView) findViewById(R.id.bmapView);
+		mMapView.showScaleControl(true);// 隐藏地图上的比例尺
+		mMapView.showZoomControls(false);// 隐藏地图上的缩放控件
 		mBaiduMap = mMapView.getMap();
 		mBaiduMap.setMapStatus(MapStatusUpdateFactory
 				.newMapStatus(new MapStatus.Builder().zoom(12).build()));
+
 		// 开启定位图层
 		mBaiduMap.setMyLocationEnabled(true);
 		// 定位初始化
@@ -145,7 +152,7 @@ public class MainActivity extends ActionBarActivity {
 		LocationClientOption option = new LocationClientOption();
 		option.setOpenGps(true);// 打开gps
 		option.setCoorType("bd09ll"); // 设置坐标类型
-		option.setScanSpan(100);
+		option.setScanSpan(2000);
 		mLocClient.setLocOption(option);
 		mLocClient.start();
 
@@ -193,8 +200,8 @@ public class MainActivity extends ActionBarActivity {
 		// initOverlay(locations1);
 
 		// 设置车辆身份
-		//text_id = (TextView) this.findViewById(R.id.text_id);
-		//text_id.setText(idPre + idName);
+		// text_id = (TextView) this.findViewById(R.id.text_id);
+		// text_id.setText(idPre + idName);
 
 		// 消息显示区域
 		text_all = (TextView) this.findViewById(R.id.text_all);
@@ -306,15 +313,15 @@ public class MainActivity extends ActionBarActivity {
 		// 绑定百度推送服务
 		new Thread() {
 			public void run() {
-				PushManager.startWork(getApplicationContext(),
-						PushConstants.LOGIN_TYPE_API_KEY, apiKey);
-				List<String> list = new ArrayList<String>();
-				list.add("leader");
-				PushManager.setTags(getApplicationContext(), list);
-				List<String> delList = new ArrayList<String>();
-				delList.add("group");
-				delList.add("member");
-				PushManager.delTags(getApplicationContext(), delList);
+					PushManager.startWork(getApplicationContext(),
+							PushConstants.LOGIN_TYPE_API_KEY, apiKey);
+					List<String> list = new ArrayList<String>();
+					list.add("leader");
+					PushManager.setTags(getApplicationContext(), list);
+					List<String> delList = new ArrayList<String>();
+					delList.add("group");
+					delList.add("member");
+					PushManager.delTags(getApplicationContext(), delList);
 			};
 		}.start();
 	}
@@ -368,39 +375,53 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		// 关闭图层定位
+		mBaiduMap.setMyLocationEnabled(false);
+		mLocClient.stop();
+
+		// 关闭方向传感器
+		// myOrientationListener.stop();
+		super.onStop();
+	}
+
+	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		super.onDestroy();
 		// 在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
 		mMapView.onDestroy();
+		super.onDestroy();
 	}
 
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
-		super.onResume();
 		// 在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
 		mMapView.onResume();
+		mLocClient.start();
+		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
-		super.onPause();
 		// 在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
 		mMapView.onPause();
+		super.onPause();
 	}
 
 	protected void onNewIntent(Intent intent) {
 		// TODO Auto-generated method stub
 		Date now = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("[HH:mm:ss] ");// 设置日期格式
+		//系统提醒消息 如绑定信息
 		if (Utils.deliverMsg.getSrc_tag().equals("")) {
 			if (!Utils.logString.equals("")) {
 				text_all.append(df.format(now) + Utils.logString + "\n");
 				scroll2Bottom(scroll_all, text_all);
 			}
-		} else {
+		} else {//群组消息
 			if (Utils.deliverMsg.getSrc_tag().contains("group")) {
 				text_group.append(df.format(now)
 						+ Utils.deliverMsg.getSrc_tag() + ":" + Utils.logString
