@@ -183,7 +183,7 @@ public class MyReceiver extends FrontiaPushMessageReceiver {
 	private void updateContent(Context context, String content) {
 		// TODO Auto-generated method stub
 		
-		
+		Utils.intentSign = true;
 		Intent intent = new Intent(context.getApplicationContext(),
 				MainActivity.class);
 		try {

@@ -15,6 +15,7 @@ public class Utils {
 	public static String MyChannelId = "";
 	public static String MyUserID = "";
 	public static DeliverMsg deliverMsg;
+	public static boolean intentSign = false;
 
 	public Utils() {
 		// TODO Auto-generated constructor stub
