@@ -3,10 +3,10 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry exported="true" kind="lib" path="D:/MyPrograms/Android/Fleet_Leader/libs/baidumapapi_v3_3_0.jar"/>
-	<classpathentry exported="true" kind="lib" path="D:/MyPrograms/Android/Fleet_Leader/libs/pushservice-4.4.0.71.jar"/>
-	<classpathentry exported="true" kind="lib" path="D:/MyPrograms/Android/Fleet_Leader/libs/locSDK_5.02.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry exported="true" kind="lib" path="C:/My Programs/Android/Fleet_Leader/libs/baidumapapi_v3_3_0.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/My Programs/Android/Fleet_Leader/libs/locSDK_5.02.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/My Programs/Android/Fleet_Leader/libs/pushservice-4.4.0.71.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

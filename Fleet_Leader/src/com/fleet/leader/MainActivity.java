@@ -1,5 +1,6 @@
 package com.fleet.leader;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,10 +38,12 @@ import com.fleet.utils.Utils;
 
 import android.support.v7.app.ActionBarActivity;
 import android.R.integer;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,12 +59,16 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 	// 常参
-	private String msgPre = "push_message";// 解析接收到的消息时的前缀
-	private String apiKey = "TPO9PYH8sULRrUuYHyeCqX7e";// 百度PUSH的API KEY
-	private String[] sendLevel = { "G", "A" };// 下拉框选项
-	private String[] sendTags = { "group", "all" };// 向group/all发送时的TAG
-	private int freshTime = 1000;// 地图刷新时间
-	private int locScanPan = 2000;// 定位刷新时间
+	private final String msgPre = "push_message";// 解析接收到的消息时的前缀
+	private final String apiKey = "TPO9PYH8sULRrUuYHyeCqX7e";// 百度PUSH的API KEY
+	private final String[] sendLevel = { "G", "A" };// 下拉框选项
+	private final String[] sendTags = { "group", "all" };// 向group/all发送时的TAG
+	private final int freshTime = 1000;// 地图刷新时间
+	private final int locScanPan = 2000;// 定位刷新时间
+	private final int groupRecv = 2;// mHandlerMsg
+	private final int groupSend = 3;// mHandlerMsg
+	private final int allRecv = 4;// mHandlerMsg
+	private final int allSend = 5;// mHandlerMsg
 
 	// 变量
 	private String postStr;
@@ -71,6 +78,7 @@ public class MainActivity extends ActionBarActivity {
 	private LatLng myLatLng;
 	private List<LocationOfCar> locs = null;
 	private Handler locHandler;
+	private Vibrator vibrator;
 
 	// Layout控件
 	private TextView text_all;
@@ -101,7 +109,11 @@ public class MainActivity extends ActionBarActivity {
 		SDKInitializer.initialize(getApplicationContext());
 
 		setContentView(R.layout.activity_main);
-		edit_send = (EditText) this.findViewById(R.id.edit_send);
+		edit_send = (EditText) this.findViewById(R.id.edit_send);//发送Button
+		locs = new ArrayList<LocationOfCar>();//位置数组
+		bitmapDescriptor = BitmapDescriptorFactory
+				.fromResource(R.drawable.icon_member);//图标
+		vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);//震动
 
 		// 选择消息级别
 		spin_level = (Spinner) this.findViewById(R.id.spin_level);
@@ -147,20 +159,6 @@ public class MainActivity extends ActionBarActivity {
 		mLocClient.setLocOption(option);
 		mLocClient.start();
 
-		myLatLng = new LatLng(38.90, 121.53);
-		LatLng tmploc = new LatLng(myLatLng.latitude - Math.random() / 40,
-				myLatLng.longitude + Math.random() / 22);
-		locs = new ArrayList<LocationOfCar>();
-		LocationOfCar tmpLocar = new LocationOfCar("Run", "123", tmploc);
-		locs.add(tmpLocar);
-		tmploc = new LatLng(myLatLng.latitude - Math.random() / 30,
-				myLatLng.longitude - Math.random() / 22);
-		tmpLocar = new LocationOfCar("Run1", "1232", tmploc);
-		locs.add(tmpLocar);
-		bitmapDescriptor = BitmapDescriptorFactory
-				.fromResource(R.drawable.icon_member);
-		setLocations(locs);
-
 		locHandler = new Handler();
 		locHandler.postDelayed(runnable, freshTime);
 
@@ -204,22 +202,22 @@ public class MainActivity extends ActionBarActivity {
 												Utils.MyUserID);
 										params.add(new BasicNameValuePair(
 												msgPre, jsonObject1.toString()));// 封装消息实体
-										mHandler.sendEmptyMessage(3);
+										mHandler.sendEmptyMessage(groupSend);
 										String resFromServer = HttpUtils
 												.PostData(params);
 										if (!resFromServer.equals("200")) {
 											postStr = "Send Failed";
-											mHandler.sendEmptyMessage(2);
+											mHandler.sendEmptyMessage(groupRecv);
 										}
 									} catch (JSONException e2) {
 										// TODO Auto-generated catch block
 										e2.printStackTrace();
 										postStr = e2.toString();
-										mHandler.sendEmptyMessage(2);
+										mHandler.sendEmptyMessage(groupRecv);
 									} catch (Exception e) {
 										// TODO: handle exception
 										postStr = e.toString();
-										mHandler.sendEmptyMessage(2);
+										mHandler.sendEmptyMessage(groupRecv);
 									}
 
 								}
@@ -239,23 +237,23 @@ public class MainActivity extends ActionBarActivity {
 												Utils.MyUserID);
 										params.add(new BasicNameValuePair(
 												msgPre, jsonObject1.toString()));// 封装消息实体
-										mHandler.sendEmptyMessage(5);
+										mHandler.sendEmptyMessage(allSend);
 										String resFromServer = HttpUtils
 												.PostData(params);
 										if (!resFromServer.equals("200")) {
 											postStr = "Send Failed"
 													+ resFromServer;
-											mHandler.sendEmptyMessage(4);
+											mHandler.sendEmptyMessage(allRecv);
 										}
 									} catch (JSONException e2) {
 										// TODO Auto-generated catch block
 										e2.printStackTrace();
 										postStr = e2.toString();
-										mHandler.sendEmptyMessage(4);
+										mHandler.sendEmptyMessage(allRecv);
 									} catch (Exception e) {
 										// TODO: handle exception
 										postStr = e.toString();
-										mHandler.sendEmptyMessage(4);
+										mHandler.sendEmptyMessage(allRecv);
 									}
 								}
 
@@ -287,21 +285,19 @@ public class MainActivity extends ActionBarActivity {
 		}.start();
 	}
 
-	// 定位其他车辆
+	/**
+	 * 定位其他车辆
+	 */
 	private Runnable runnable = new Runnable() {
 		public void run() {
 			new Thread() {
 				public void run() {
-					for (int i = 0; i < locs.size(); i++) {
-						LatLng tmp = new LatLng(
-								locs.get(i).getLocation().latitude
-										+ Math.random() / 100, locs.get(i)
-										.getLocation().longitude
-										+ Math.random() / 50);
-						locs.get(i).setLocation(tmp);
-
+					if (null == this) { // 走到了onDestory,则不再进行后续消息处理
+						return;
 					}
-
+					if (MainActivity.this.isFinishing()) { // Activity正在停止，则不再后续处理
+						return;
+					}
 					setLocations(locs);
 				};
 			}.start();
@@ -310,32 +306,45 @@ public class MainActivity extends ActionBarActivity {
 
 	};
 
+	/**
+	 * 界面中消息的显示
+	 */
 	private Handler mHandler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
+			if (null == this) { // 走到了onDestory,则不再进行后续消息处理
+				return;
+			}
+			if (MainActivity.this.isFinishing()) { // Activity正在停止，则不再后续处理
+				return;
+			}
 			Date now = new Date();
 			SimpleDateFormat df = new SimpleDateFormat("[HH:mm:ss] ");// 设置日期格式
 			switch (msg.what) {
 			case 1:
 
 				break;
-			case 2:// group显示接收消息
+			case groupRecv:// group显示接收消息
 				text_group.append(df.format(now) + postStr + "\n");
+				scroll2Bottom(scroll_group, text_group);
 				break;
-			case 3:// group显示发送消息
+			case groupSend:// group显示发送消息
 				text_group.append(df.format(now) + "Leader:"
 						+ edit_send.getText() + "\n");
 				edit_send.setText("");
+				scroll2Bottom(scroll_group, text_group);
 				break;
-			case 4:// 广播显示接收消息
+			case allRecv:// 广播显示接收消息
 				text_all.append(df.format(now) + postStr + "\n");
+				scroll2Bottom(scroll_all, text_all);
 				break;
-			case 5:// 广播显示发送消息
+			case allSend:// 广播显示发送消息
 				text_all.append(df.format(now) + "Leader:"
 						+ edit_send.getText() + "\n");
 				edit_send.setText("");
+				scroll2Bottom(scroll_all, text_all);
 			default:
 				break;
-			}
+			}		
 		};
 	};
 
@@ -364,8 +373,8 @@ public class MainActivity extends ActionBarActivity {
 		// 关闭图层定位
 		mBaiduMap.setMyLocationEnabled(false);
 		mLocClient.stop();
+		vibrator.cancel();
 
-		// 关闭方向传感器
 		super.onStop();
 	}
 
@@ -374,6 +383,18 @@ public class MainActivity extends ActionBarActivity {
 		// TODO Auto-generated method stub
 		// 在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
 		mMapView.onDestroy();
+		if (null != mHandler) {
+			mHandler.removeMessages(1);
+			mHandler.removeMessages(groupRecv);
+			mHandler.removeMessages(groupSend);
+			mHandler.removeMessages(allRecv);
+			mHandler.removeMessages(allSend);
+			mHandler = null;
+		}
+		if (null != locHandler) {
+			locHandler = null;
+		}
+		PushManager.stopWork(getApplicationContext());
 		super.onDestroy();
 	}
 
@@ -419,22 +440,43 @@ public class MainActivity extends ActionBarActivity {
 		if (Utils.intentSign) {
 			Date now = new Date();
 			SimpleDateFormat df = new SimpleDateFormat("[HH:mm:ss] ");// 设置日期格式
-
 			if (Utils.deliverMsg.getMessage_type().equals("location")) {// 定位信息
+				String recvLocStr = Utils.deliverMsg.getLocation();
+				String[] recvLoc = recvLocStr.split(",");
+				// 测试数据
+				myLatLng = new LatLng(Double.parseDouble(recvLoc[0]),
+						Double.parseDouble(recvLoc[1]));
+				
+				boolean existSign = false;
+				for (int i = 0; i < locs.size(); i++) {
+					if (locs.get(i).getName()
+							.equals(Utils.deliverMsg.getSrc_id())) {
+						locs.get(i).setLocation(myLatLng);
+						locs.get(i).setTime(df.format(now));
+						existSign = true;
+						break;
+					}
+				}
+				if (!existSign) {
+					LocationOfCar tmpLocar = new LocationOfCar(
+							Utils.deliverMsg.getSrc_id(), df.format(now), myLatLng);
+					locs.add(tmpLocar);
+				}
 
-			} else if (Utils.deliverMsg.getSrc_tag().equals("")) {// 系统提醒消息
-																	// 如绑定信息
-				if (!Utils.logString.equals("")) {
+			} else if (Utils.deliverMsg.getSrc_tag().equals("")) {
+				if (!Utils.logString.equals("")) {// 系统提醒消息 如绑定信息
 					text_all.append(df.format(now) + Utils.logString + "\n");
 					scroll2Bottom(scroll_all, text_all);
 				}
-			} else {// 群组消息
-				if (Utils.deliverMsg.getSrc_tag().contains("group")) {
-					text_group.append(df.format(now)
-							+ Utils.deliverMsg.getSrc_tag() + ":"
-							+ Utils.logString + "\n");
-					scroll2Bottom(scroll_group, text_group);
-				}
+			} else if (Utils.deliverMsg.getSrc_tag().contains("group")) {// 群组消息
+				text_group.append(df.format(now)
+						+ Utils.deliverMsg.getSrc_tag() + ":" + Utils.logString
+						+ "\n");
+				scroll2Bottom(scroll_group, text_group);
+				
+				//震动手机
+				long pattern = 300;
+				vibrator.vibrate(pattern);
 			}
 		}
 		Utils.intentSign = false;// 确定消息只显示一次
@@ -478,6 +520,8 @@ public class MainActivity extends ActionBarActivity {
 					.direction(100).latitude(location.getLatitude())
 					.longitude(location.getLongitude()).build();
 			mBaiduMap.setMyLocationData(locData);
+
+			// 将地图的中心设为定位点
 			if (isFirstLoc) {
 				isFirstLoc = false;
 				LatLng ll = new LatLng(location.getLatitude(),
@@ -491,6 +535,11 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 
+	/**
+	 * 显示Marker组的位置
+	 * 
+	 * @param locationList
+	 */
 	public void setLocations(List<LocationOfCar> locationList) {
 		if (locationList != null && locationList.size() != 0) {
 			// 清除之前的标记
