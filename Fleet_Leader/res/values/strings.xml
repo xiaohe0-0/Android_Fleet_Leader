@@ -4,5 +4,6 @@
     <string name="app_name">车队管理系统1.0(Leader版)</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_activity__camera">Photo</string>
 
 </resources>

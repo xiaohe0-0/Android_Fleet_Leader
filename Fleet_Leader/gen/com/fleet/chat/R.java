@@ -981,11 +981,20 @@ containing a value of this type.
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
         public static final int bg_chat=0x7f020057;
-        public static final int bg_group=0x7f020058;
-        public static final int boder=0x7f020059;
-        public static final int ic_launcher=0x7f02005a;
-        public static final int icon_group=0x7f02005b;
-        public static final int icon_member=0x7f02005c;
+        public static final int bg_edittext=0x7f020058;
+        public static final int bg_edittext_top=0x7f020059;
+        public static final int bg_group=0x7f02005a;
+        public static final int boder=0x7f02005b;
+        public static final int capture=0x7f02005c;
+        public static final int ic_launcher=0x7f02005d;
+        public static final int ic_menu_camera=0x7f02005e;
+        public static final int ic_menu_gallery=0x7f02005f;
+        public static final int ic_menu_send=0x7f020060;
+        public static final int ic_menu_voice=0x7f020061;
+        public static final int ic_menu_voice_down=0x7f020062;
+        public static final int ic_textfield=0x7f020063;
+        public static final int icon_group=0x7f020064;
+        public static final int icon_member=0x7f020065;
     }
     public static final class id {
         public static final int action_bar=0x7f05001a;
@@ -1001,12 +1010,15 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f05002f;
         public static final int action_mode_bar_stub=0x7f05002e;
         public static final int action_mode_close_button=0x7f050022;
-        public static final int action_settings=0x7f05004c;
+        public static final int action_settings=0x7f050051;
         public static final int activity_chooser_view_content=0x7f050023;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
         public static final int bmapView=0x7f050044;
+        public static final int btn_film=0x7f05004e;
+        public static final int btn_picture=0x7f05004d;
         public static final int btn_send=0x7f05004b;
+        public static final int btn_voice=0x7f05004c;
         public static final int checkbox=0x7f05002b;
         public static final int collapseActionView=0x7f05000d;
         public static final int default_activity_button=0x7f050026;
@@ -1036,6 +1048,7 @@ containing a value of this type.
         public static final int radio=0x7f05002d;
         public static final int right_container=0x7f050032;
         public static final int right_icon=0x7f050033;
+        public static final int sView=0x7f05004f;
         public static final int scroll_all=0x7f050045;
         public static final int scroll_bg=0x7f050042;
         public static final int scroll_group=0x7f050047;
@@ -1050,6 +1063,7 @@ containing a value of this type.
         public static final int search_src_text=0x7f05003d;
         public static final int search_voice_btn=0x7f050041;
         public static final int shortcut=0x7f05002c;
+        public static final int show=0x7f050050;
         public static final int showCustom=0x7f050007;
         public static final int showHome=0x7f050004;
         public static final int showTitle=0x7f050006;
@@ -1117,7 +1131,9 @@ containing a value of this type.
         public static final int abc_search_dropdown_item_icons_2line=0x7f030016;
         public static final int abc_search_view=0x7f030017;
         public static final int activity_main=0x7f030018;
-        public static final int support_simple_spinner_dropdown_item=0x7f030019;
+        public static final int activity_picture=0x7f030019;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001a;
+        public static final int uploadpic=0x7f03001b;
     }
     public static final class menu {
         public static final int main=0x7f0d0000;
@@ -1166,6 +1182,7 @@ containing a value of this type.
         public static final int action_settings=0x7f0a000f;
         public static final int app_name=0x7f0a000d;
         public static final int hello_world=0x7f0a000e;
+        public static final int title_activity_activity__camera=0x7f0a0010;
     }
     public static final class style {
         /** 

@@ -16,6 +16,7 @@ public class Utils {
 	public static String MyUserID = "";
 	public static DeliverMsg deliverMsg;
 	public static boolean intentSign = false;
+	public static String uploadPicIp = "http://202.118.75.193:81/push_demo/upload.php";
 
 	public Utils() {
 		// TODO Auto-generated constructor stub

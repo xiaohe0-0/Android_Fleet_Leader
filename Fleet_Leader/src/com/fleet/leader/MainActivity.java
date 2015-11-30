@@ -48,6 +48,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroupOverlay;
+import android.view.Window;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -69,6 +70,7 @@ public class MainActivity extends ActionBarActivity {
 	private final int groupSend = 3;// mHandlerMsg
 	private final int allRecv = 4;// mHandlerMsg
 	private final int allSend = 5;// mHandlerMsg
+	private final int zoomLevel = 20;//Baidu map zoom level
 
 	// 变量
 	private String postStr;
@@ -84,6 +86,7 @@ public class MainActivity extends ActionBarActivity {
 	private TextView text_all;
 	private TextView text_group;
 	private Button btn_send;
+	private Button btn_picture;
 	private ScrollView scroll_all;
 	private ScrollView scroll_group;
 	private Spinner spin_level;
@@ -108,6 +111,7 @@ public class MainActivity extends ActionBarActivity {
 		// 注意该方法要再setContentView方法之前实现
 		SDKInitializer.initialize(getApplicationContext());
 
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		edit_send = (EditText) this.findViewById(R.id.edit_send);//发送Button
 		locs = new ArrayList<LocationOfCar>();//位置数组
@@ -145,10 +149,9 @@ public class MainActivity extends ActionBarActivity {
 		mMapView.showZoomControls(false);// 隐藏地图上的缩放控件
 		mBaiduMap = mMapView.getMap();
 		mBaiduMap.setMapStatus(MapStatusUpdateFactory
-				.newMapStatus(new MapStatus.Builder().zoom(12).build()));
+				.newMapStatus(new MapStatus.Builder().zoom(zoomLevel).build()));
 
-		// 开启定位图层
-		mBaiduMap.setMyLocationEnabled(true);
+		mBaiduMap.setMyLocationEnabled(true);// 开启定位图层
 		// 定位初始化
 		mLocClient = new LocationClient(this);
 		mLocClient.registerLocationListener(myListener);
@@ -167,6 +170,18 @@ public class MainActivity extends ActionBarActivity {
 		text_group = (TextView) this.findViewById(R.id.text_group);
 		scroll_all = (ScrollView) this.findViewById(R.id.scroll_all);
 		scroll_group = (ScrollView) this.findViewById(R.id.scroll_group);
+		
+		//照相
+		btn_picture = (Button)this.findViewById(R.id.btn_picture);
+		btn_picture.setOnClickListener(new Button.OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Intent intent_picture = new Intent();
+				intent_picture.setClass(MainActivity.this, Activity_Picture.class);
+				startActivity(intent_picture);
+			}
+		});
 
 		// 发送消息
 		btn_send = (Button) this.findViewById(R.id.btn_send);
