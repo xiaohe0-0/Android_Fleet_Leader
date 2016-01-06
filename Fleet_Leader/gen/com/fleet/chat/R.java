@@ -16,9 +16,6 @@ public final class R {
         public static final int abc_slide_out_bottom=0x7f040004;
         public static final int abc_slide_out_top=0x7f040005;
     }
-    public static final class array {
-        public static final int infoLevel=0x7f0c0000;
-    }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
@@ -980,21 +977,50 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int bg_chat=0x7f020057;
-        public static final int bg_edittext=0x7f020058;
-        public static final int bg_edittext_top=0x7f020059;
-        public static final int bg_group=0x7f02005a;
-        public static final int boder=0x7f02005b;
-        public static final int capture=0x7f02005c;
-        public static final int ic_launcher=0x7f02005d;
-        public static final int ic_menu_camera=0x7f02005e;
-        public static final int ic_menu_gallery=0x7f02005f;
-        public static final int ic_menu_send=0x7f020060;
-        public static final int ic_menu_voice=0x7f020061;
-        public static final int ic_menu_voice_down=0x7f020062;
-        public static final int ic_textfield=0x7f020063;
-        public static final int icon_group=0x7f020064;
-        public static final int icon_member=0x7f020065;
+        public static final int amp1=0x7f020057;
+        public static final int amp2=0x7f020058;
+        public static final int amp3=0x7f020059;
+        public static final int amp4=0x7f02005a;
+        public static final int amp5=0x7f02005b;
+        public static final int amp6=0x7f02005c;
+        public static final int amp7=0x7f02005d;
+        public static final int chat_bg_default=0x7f02005e;
+        public static final int chat_footer_bg=0x7f02005f;
+        public static final int chat_send_btn=0x7f020060;
+        public static final int chatfrom_bg=0x7f020061;
+        public static final int chatfrom_bg_focused=0x7f020062;
+        public static final int chatfrom_bg_normal=0x7f020063;
+        public static final int chatfrom_bg_pressed=0x7f020064;
+        public static final int chatting_setmode_msg_btn=0x7f020065;
+        public static final int chatting_setmode_msg_btn_focused=0x7f020066;
+        public static final int chatting_setmode_msg_btn_normal=0x7f020067;
+        public static final int chatting_setmode_msg_btn_pressed=0x7f020068;
+        public static final int chatting_setmode_voice_btn=0x7f020069;
+        public static final int chatting_setmode_voice_btn_focused=0x7f02006a;
+        public static final int chatting_setmode_voice_btn_normal=0x7f02006b;
+        public static final int chatting_setmode_voice_btn_pressed=0x7f02006c;
+        public static final int chatto_bg=0x7f02006d;
+        public static final int chatto_bg_focused=0x7f02006e;
+        public static final int chatto_bg_normal=0x7f02006f;
+        public static final int chatto_bg_pressed=0x7f020070;
+        public static final int chatto_voice_playing=0x7f020071;
+        public static final int ic_launcher=0x7f020072;
+        public static final int icon_group=0x7f020073;
+        public static final int icon_member=0x7f020074;
+        public static final int login_edit_normal=0x7f020075;
+        public static final int photo_group=0x7f020076;
+        public static final int photo_leader=0x7f020077;
+        public static final int rcd_cancel_icon=0x7f020078;
+        public static final int title_broadcast=0x7f020079;
+        public static final int title_group=0x7f02007a;
+        public static final int title_map=0x7f02007b;
+        public static final int voice_rcd_btn_nor=0x7f02007c;
+        public static final int voice_rcd_btn_pressed=0x7f02007d;
+        public static final int voice_rcd_cancel_bg=0x7f02007e;
+        public static final int voice_rcd_cancel_bg_focused=0x7f02007f;
+        public static final int voice_rcd_hint=0x7f020080;
+        public static final int voice_rcd_hint_bg=0x7f020081;
+        public static final int voice_to_short=0x7f020082;
     }
     public static final class id {
         public static final int action_bar=0x7f05001a;
@@ -1010,24 +1036,24 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f05002f;
         public static final int action_mode_bar_stub=0x7f05002e;
         public static final int action_mode_close_button=0x7f050022;
-        public static final int action_settings=0x7f050051;
+        public static final int action_settings=0x7f05005c;
         public static final int activity_chooser_view_content=0x7f050023;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
-        public static final int bmapView=0x7f050044;
-        public static final int btn_film=0x7f05004e;
-        public static final int btn_picture=0x7f05004d;
-        public static final int btn_send=0x7f05004b;
-        public static final int btn_voice=0x7f05004c;
+        public static final int bmapView=0x7f05004d;
+        public static final int btn_bottom=0x7f050044;
+        public static final int btn_rcd=0x7f050047;
+        public static final int btn_send=0x7f050045;
         public static final int checkbox=0x7f05002b;
         public static final int collapseActionView=0x7f05000d;
         public static final int default_activity_button=0x7f050026;
+        public static final int del_re=0x7f050057;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
         public static final int dropdown=0x7f05000f;
         public static final int edit_query=0x7f050036;
-        public static final int edit_send=0x7f05004a;
         public static final int end=0x7f050013;
+        public static final int et_sendmessage=0x7f050046;
         public static final int expand_activities_button=0x7f050024;
         public static final int expanded_menu=0x7f05002a;
         public static final int home=0x7f050014;
@@ -1035,23 +1061,30 @@ containing a value of this type.
         public static final int icon=0x7f050028;
         public static final int ifRoom=0x7f05000a;
         public static final int image=0x7f050025;
-        public static final int layout_bg=0x7f050043;
+        public static final int imageView1=0x7f050054;
+        public static final int img1=0x7f050056;
+        public static final int ivPopUp=0x7f050049;
+        public static final int ivVoice=0x7f05004a;
+        public static final int iv_userhead=0x7f05004f;
         public static final int left_icon=0x7f050031;
         public static final int listMode=0x7f050001;
         public static final int list_item=0x7f050027;
+        public static final int listview=0x7f05004b;
         public static final int middle=0x7f050012;
         public static final int never=0x7f050009;
         public static final int none=0x7f050010;
         public static final int normal=0x7f050000;
+        public static final int progressBar1=0x7f05005a;
         public static final int progress_circular=0x7f050034;
         public static final int progress_horizontal=0x7f050035;
         public static final int radio=0x7f05002d;
+        public static final int rcChat_popup=0x7f05004c;
         public static final int right_container=0x7f050032;
         public static final int right_icon=0x7f050033;
-        public static final int sView=0x7f05004f;
-        public static final int scroll_all=0x7f050045;
-        public static final int scroll_bg=0x7f050042;
-        public static final int scroll_group=0x7f050047;
+        public static final int rl_bottom=0x7f050042;
+        public static final int rl_bottom_down=0x7f050048;
+        public static final int rl_bottom_up=0x7f050043;
+        public static final int sc_img1=0x7f050058;
         public static final int search_badge=0x7f050038;
         public static final int search_bar=0x7f050037;
         public static final int search_button=0x7f050039;
@@ -1063,21 +1096,25 @@ containing a value of this type.
         public static final int search_src_text=0x7f05003d;
         public static final int search_voice_btn=0x7f050041;
         public static final int shortcut=0x7f05002c;
-        public static final int show=0x7f050050;
         public static final int showCustom=0x7f050007;
         public static final int showHome=0x7f050004;
         public static final int showTitle=0x7f050006;
-        public static final int spin_level=0x7f050049;
         public static final int split_action_bar=0x7f05001c;
         public static final int submit_area=0x7f05003f;
         public static final int tabMode=0x7f050002;
-        public static final int text_all=0x7f050046;
-        public static final int text_group=0x7f050048;
         public static final int title=0x7f050029;
         public static final int title_container=0x7f050030;
         public static final int top_action_bar=0x7f05001e;
+        public static final int tv_chatcontent=0x7f050050;
+        public static final int tv_sendtime=0x7f05004e;
+        public static final int tv_time=0x7f050051;
+        public static final int tv_username=0x7f050052;
         public static final int up=0x7f05001f;
         public static final int useLogo=0x7f050003;
+        public static final int voice_rcd_hint_loading=0x7f050059;
+        public static final int voice_rcd_hint_rcding=0x7f050053;
+        public static final int voice_rcd_hint_tooshort=0x7f05005b;
+        public static final int volume=0x7f050055;
         public static final int withText=0x7f05000c;
     }
     public static final class integer {
@@ -1130,13 +1167,19 @@ containing a value of this type.
         public static final int abc_screen=0x7f030015;
         public static final int abc_search_dropdown_item_icons_2line=0x7f030016;
         public static final int abc_search_view=0x7f030017;
-        public static final int activity_main=0x7f030018;
-        public static final int activity_picture=0x7f030019;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001a;
-        public static final int uploadpic=0x7f03001b;
+        public static final int activity_broadcast=0x7f030018;
+        public static final int activity_group=0x7f030019;
+        public static final int activity_main=0x7f03001a;
+        public static final int activity_map=0x7f03001b;
+        public static final int chatting_item_msg_text_left=0x7f03001c;
+        public static final int chatting_item_msg_text_right=0x7f03001d;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001e;
+        public static final int voice_rcd_hint_window=0x7f03001f;
     }
     public static final class menu {
-        public static final int main=0x7f0d0000;
+        public static final int group=0x7f0c0000;
+        public static final int main=0x7f0c0001;
+        public static final int map=0x7f0c0002;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1182,7 +1225,9 @@ containing a value of this type.
         public static final int action_settings=0x7f0a000f;
         public static final int app_name=0x7f0a000d;
         public static final int hello_world=0x7f0a000e;
-        public static final int title_activity_activity__camera=0x7f0a0010;
+        public static final int title_activity_broadcast=0x7f0a0011;
+        public static final int title_activity_group=0x7f0a0012;
+        public static final int title_activity_map=0x7f0a0010;
     }
     public static final class style {
         /** 
@@ -1394,6 +1439,9 @@ containing a value of this type.
         public static final int Widget_AppCompat_ProgressBar=0x7f0b000a;
         public static final int Widget_AppCompat_ProgressBar_Horizontal=0x7f0b0009;
         public static final int Widget_AppCompat_Spinner_DropDown_ActionBar=0x7f0b0022;
+        public static final int chat_content_date_style=0x7f0b0082;
+        public static final int chat_text_date_style=0x7f0b0081;
+        public static final int chat_text_name_style=0x7f0b0083;
     }
     public static final class styleable {
         /**  ============================================ 

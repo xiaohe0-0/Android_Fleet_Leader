@@ -1,168 +1,25 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scroll_bg"
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/tabhost"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:scrollbars="none"
-    tools:context=".MainActivity" >
+    android:layout_height="match_parent" > <!-- 注意这里，id的设置方法跟普通控件不同，必须为tabhost -->
 
-    <LinearLayout
-        android:id="@+id/layout_bg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+   <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:orientation="vertical" >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:background="#DFDFDF"
-            android:orientation="horizontal"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp" >
+        <!-- TabWidget控件和FrameLayout控件是必须的，分别用来表示标签和标签下面的内容，同样注意其id选项的设置 -->
+        <TabWidget
+        android:id="@android:id/tabs"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
-            <com.baidu.mapapi.map.MapView
-                android:id="@+id/bmapView"
+            <FrameLayout
+                android:id="@android:id/tabcontent"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:clickable="true" />
-        </LinearLayout>
+                android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:layout_marginTop="2dp"
-            android:background="@drawable/bg_chat"
-            android:orientation="horizontal"
-			android:layout_marginLeft="10dp"
-			android:layout_marginRight="10dp"
-            android:paddingBottom="1dp"
-            android:paddingLeft="1dp"
-            android:paddingRight="1dp"
-            android:paddingTop="1dp" >
-
-            <ScrollView
-                android:id="@+id/scroll_all"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fadeScrollbars="false" >
-
-                <TextView
-                    android:id="@+id/text_all"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="" >
-                </TextView>
-            </ScrollView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:layout_marginTop="2dp"
-            android:background="@drawable/bg_chat"
-            android:orientation="horizontal"
-            android:layout_marginLeft="10dp"
-			android:layout_marginRight="10dp"
-            android:paddingBottom="1dp"
-            android:paddingLeft="1dp"
-            android:paddingRight="1dp"
-            android:paddingTop="1dp" >
-
-            <ScrollView
-                android:id="@+id/scroll_group"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fadeScrollbars="false" >
-
-                <TextView
-                    android:id="@+id/text_group"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="" >
-                </TextView>
-            </ScrollView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="vertical" >
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@drawable/bg_edittext_top" >
-            </Button>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:orientation="horizontal" >
-
-                <Spinner
-                    android:id="@+id/spin_level"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.95"
-                    android:entries="@array/infoLevel" >
-                </Spinner>
-
-                <EditText
-                    android:id="@+id/edit_send"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.35"
-                    android:background="@drawable/bg_edittext"
-                    android:text=" " >
-                </EditText>
-
-                <Button
-                    android:id="@+id/btn_send"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:drawableRight="@drawable/ic_menu_send" >
-                </Button>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:orientation="horizontal" >
-
-                <Button
-                    android:id="@+id/btn_voice"
-                    android:layout_width="120dp"
-                    android:layout_height="35dp"
-                    android:background="@null"
-                    android:drawableRight="@drawable/ic_menu_voice" >
-                </Button>
-
-                <Button
-                    android:id="@+id/btn_picture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:background="@null"
-                    android:drawableRight="@drawable/ic_menu_gallery" >
-                </Button>
-
-                <Button
-                    android:id="@+id/btn_film"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:background="@null"
-                    android:drawableRight="@drawable/ic_menu_camera" >
-                </Button>
-            </LinearLayout>
-        </LinearLayout>
     </LinearLayout>
 
-</ScrollView>
+</TabHost>
