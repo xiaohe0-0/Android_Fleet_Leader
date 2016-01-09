@@ -42,6 +42,8 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- 增加文件存储和访问摄像头的权限 -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -79,6 +81,16 @@
         <activity
             android:name="com.fleet.activity.GroupActivity"
             android:label="@string/title_activity_group" >
+        </activity>
+        <activity
+            android:name="com.fleet.activity.ShowPicActivity"
+            android:label="@string/title_activity_show_pic"
+            android:theme="@android:style/Theme.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.fleet.activity.CameraActivity"
+            android:label="@string/title_activity_camera"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
     </application>
 

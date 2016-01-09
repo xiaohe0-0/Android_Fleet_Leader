@@ -91,6 +91,33 @@
                 android:layout_marginLeft="80dp"
                 android:src="@drawable/chatting_setmode_msg_btn" />
 
+            <ImageView
+                android:id="@+id/ivCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="30dp"
+                android:layout_toRightOf="@+id/ivVoice"
+                android:src="@drawable/chatting_setmode_camera_btn_normal" />
+            
+            <ImageView
+                android:id="@+id/ivVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="30dp"
+                android:layout_toRightOf="@+id/ivCamera"
+                android:src="@drawable/chatting_setmode_video_btn_normal" />
+            
+            <ImageView
+                android:id="@+id/ivMore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="30dp"
+                android:layout_toRightOf="@+id/ivVideo"
+                android:src="@drawable/chatting_setmode_more_btn_normal" />
+
         </RelativeLayout>
     </RelativeLayout>
 

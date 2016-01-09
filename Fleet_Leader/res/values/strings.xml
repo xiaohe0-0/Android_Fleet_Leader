@@ -7,5 +7,7 @@
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_broadcast">BroadcastActivity</string>
     <string name="title_activity_group">GroupActivity</string>
+    <string name="title_activity_show_pic">ShowPicActivity</string>
+    <string name="title_activity_camera">CameraActivity</string>
 
 </resources>

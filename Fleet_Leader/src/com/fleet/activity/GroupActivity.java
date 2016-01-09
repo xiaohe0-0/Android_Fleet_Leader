@@ -5,10 +5,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.fleet.function.*;
+import com.fleet.utils.Utils;
 import com.fleet.chat.R;
-import com.fleet.chat.R.id;
-import com.fleet.chat.R.layout;
-import com.fleet.chat.R.menu;
 import com.fleet.domain.*;
 
 import android.support.v7.app.ActionBarActivity;
@@ -19,6 +17,8 @@ import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -28,19 +28,25 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.hardware.Camera;
 
-public class GroupActivity extends ActionBarActivity implements OnClickListener  {
+public class GroupActivity extends Activity implements OnClickListener {
 
-	private ImageView chatting_mode_text, chatting_mode_voice, volume;
+	private ImageView chatting_mode_text, chatting_mode_voice,
+			chatting_mode_camera, volume;
 	private ListView mListView;
-	private Button mBtnRcd,mBtnSend;
+	private Button mBtnRcd, mBtnSend;
 	private EditText mEditTextContent;
 	private Handler mHandler = new Handler();
 	private RelativeLayout mBottom;
 	private View rcChat_popup;
 	private LinearLayout voice_rcd_hint_loading, voice_rcd_hint_rcding,
 			voice_rcd_hint_tooshort;
-	private ImageView img1, sc_img1;
+	private ImageView img1;
 	private LinearLayout del_re;
 	private long startVoiceT, endVoiceT;
 	private SoundMeter mSensor;
@@ -57,7 +63,6 @@ public class GroupActivity extends ActionBarActivity implements OnClickListener 
 		setContentView(R.layout.activity_group);
 
 		initView();// 初始化界面
-
 	}
 
 	private void initView() {
@@ -100,6 +105,16 @@ public class GroupActivity extends ActionBarActivity implements OnClickListener 
 				// TODO Auto-generated method stub
 				mBtnRcd.setVisibility(View.VISIBLE);
 				mBottom.setVisibility(View.GONE);
+			}
+		});
+
+		chatting_mode_camera = (ImageView) this.findViewById(R.id.ivCamera);
+		chatting_mode_camera.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				ShowCamera();
 			}
 		});
 
@@ -265,7 +280,7 @@ public class GroupActivity extends ActionBarActivity implements OnClickListener 
 
 		return sbBuffer.toString();
 	}
-	
+
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
@@ -279,7 +294,8 @@ public class GroupActivity extends ActionBarActivity implements OnClickListener 
 		// TODO Auto-generated method stub
 		String contString = mEditTextContent.getText().toString().trim();
 		if (contString.length() < 1) {
-			Toast.makeText(getApplicationContext(), "发送内容不能为空", Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), "发送内容不能为空",
+					Toast.LENGTH_LONG).show();
 		} else {
 			ChatMsgEntity entity = new ChatMsgEntity();
 			entity.setDate(getDate());
@@ -292,6 +308,44 @@ public class GroupActivity extends ActionBarActivity implements OnClickListener 
 			mEditTextContent.setText("");
 			mListView.setSelection(mListView.getCount() - 1);
 		}
+	}
+
+	public void showPic(String picName) {
+		Intent intent = new Intent(this, ShowPicActivity.class);
+		intent.putExtra("picName", picName);
+		startActivity(intent);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (resultCode) {
+		case RESULT_OK:
+			String picName = data.getStringExtra("picName");
+			UpdateCamera(picName);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	private void ShowCamera() {
+		Intent intent = new Intent();
+		intent.setClass(this, CameraActivity.class);
+		startActivityForResult(intent, 0);
+	}
+	
+	public void UpdateCamera(String cameraName) {
+		ChatMsgEntity entity = new ChatMsgEntity();
+		entity.setDate(getDate());
+		entity.setName("Leader");
+		entity.setMsgType(false);
+		entity.setText(cameraName);
+		mDataArrays.add(entity);
+		mAdapter.notifyDataSetChanged();
+		mListView.setSelection(mListView.getCount() - 1);
 	}
 
 	@Override
