@@ -2,7 +2,6 @@
 package com.fleet.domain;
 
 public class ChatMsgEntity {
-    private static final String TAG = ChatMsgEntity.class.getSimpleName();
 
     private String name;
 

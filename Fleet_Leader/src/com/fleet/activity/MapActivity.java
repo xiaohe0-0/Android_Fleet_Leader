@@ -1,9 +1,11 @@
 package com.fleet.activity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
 import com.fleet.domain.*;
+import com.fleet.utils.Utils;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.BDLocationListener;
@@ -26,14 +28,16 @@ import com.fleet.chat.R;
 import com.fleet.chat.R.id;
 import com.fleet.chat.R.layout;
 import com.fleet.chat.R.menu;
-
 import android.support.v7.app.ActionBarActivity;
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 
+@SuppressLint("SimpleDateFormat")
 public class MapActivity extends ActionBarActivity {
 	// 常参
 	private final int freshTime = 1000;// 地图刷新时间
@@ -41,13 +45,9 @@ public class MapActivity extends ActionBarActivity {
 	private final int zoomLevel = 20;// Baidu map zoom level
 
 	// 变量
-	private String postStr;
-	private String selectedLevel;
-	private String sendStr;
-	private LatLng myLatLng;
 	private List<LocationOfCar> locs = null;
 	private Handler locHandler;
-	private Vibrator vibrator;
+	private LatLng myLatLng;
 
 	// 百度地图
 	private MapView mMapView = null;
@@ -248,5 +248,37 @@ public class MapActivity extends ActionBarActivity {
 						.addOverlay(overlayOptions_marker));
 			}
 		}
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		if (Utils.intentSign) {
+			Date now = new Date();
+			SimpleDateFormat df = new SimpleDateFormat("[HH:mm:ss] ");// 设置日期格式
+			String recvLocStr = Utils.deliverMsg.getLocation();
+			String[] recvLoc = recvLocStr.split(",");
+			// 测试数据
+			myLatLng = new LatLng(Double.parseDouble(recvLoc[0]),
+					Double.parseDouble(recvLoc[1]));
+			
+			boolean existSign = false;
+			for (int i = 0; i < locs.size(); i++) {
+				if (locs.get(i).getName()
+						.equals(Utils.deliverMsg.getSrc_id())) {
+					locs.get(i).setLocation(myLatLng);
+					locs.get(i).setTime(df.format(now));
+					existSign = true;
+					break;
+				}
+			}
+			if (!existSign) {
+				LocationOfCar tmpLocar = new LocationOfCar(
+						Utils.deliverMsg.getSrc_id(), df.format(now), myLatLng);
+				locs.add(tmpLocar);
+			}
+			Utils.intentSign = false;// 确定消息只显示一次
+		}
+		super.onNewIntent(intent);
 	}
 }

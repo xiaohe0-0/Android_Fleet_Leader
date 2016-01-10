@@ -8,8 +8,6 @@ import com.fleet.activity.GroupActivity;
 import com.fleet.chat.R;
 import com.fleet.utils.Utils;
 
-import android.R.integer;
-import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -32,7 +30,6 @@ public class ChatMsgViewAdapter extends BaseAdapter {
 		int IMVT_TO_MSG = 1;
 	}
 
-	private static final String TAG = ChatMsgViewAdapter.class.getSimpleName();
 
 	private List<ChatMsgEntity> coll;
 
@@ -137,6 +134,7 @@ public class ChatMsgViewAdapter extends BaseAdapter {
 			if (file.exists()) {
 				viewHolder.tvContent.setVisibility(View.GONE);
 				viewHolder.ivContent.setVisibility(View.VISIBLE);
+				viewHolder.tvTime.setText("");
 				
 				BitmapFactory.Options opts = new BitmapFactory.Options();   //压缩，用于节省BITMAP内存空间--解决BUG的关键步骤    
 				opts.inSampleSize = 4;    //这个的值压缩的倍数（2的整数倍），数值越小，压缩率越小，图片越清晰    

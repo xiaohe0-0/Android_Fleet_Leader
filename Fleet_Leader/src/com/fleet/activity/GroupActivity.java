@@ -30,24 +30,30 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 
 public class GroupActivity extends Activity implements OnClickListener {
 
+	// 控件
 	private ImageView chatting_mode_text, chatting_mode_voice,
 			chatting_mode_camera, volume;
 	private ListView mListView;
 	private Button mBtnRcd, mBtnSend;
 	private EditText mEditTextContent;
-	private Handler mHandler = new Handler();
 	private RelativeLayout mBottom;
 	private View rcChat_popup;
 	private LinearLayout voice_rcd_hint_loading, voice_rcd_hint_rcding,
 			voice_rcd_hint_tooshort;
 	private ImageView img1;
 	private LinearLayout del_re;
+
+	// 变量
+	private Handler mHandler = new Handler();
 	private long startVoiceT, endVoiceT;
 	private SoundMeter mSensor;
 	private String voiceName;
@@ -55,14 +61,25 @@ public class GroupActivity extends Activity implements OnClickListener {
 	private ChatMsgViewAdapter mAdapter;
 	private int flag = 1;
 	private boolean isShosrt = false;
+
+	// 常量
 	private static final int POLL_INTERVAL = 300;
+
+	// Listener
+	private MyListener listener = null;
+	private Boolean MyListenerIsRegistered = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group);
+		
+		listener = new MyListener();
+		registerReceiver(listener, new IntentFilter(
+				"com.fleet.chat.group_notice"));
 
 		initView();// 初始化界面
+		
 	}
 
 	private void initView() {
@@ -183,16 +200,8 @@ public class GroupActivity extends Activity implements OnClickListener {
 						}, 500);
 						return false;
 					}
-					ChatMsgEntity entity = new ChatMsgEntity();
-					entity.setDate(getDate());
-					entity.setName("Leader");
-					entity.setMsgType(true);
-					entity.setTime(time + "\"");
-					entity.setText(voiceName);
-					mDataArrays.add(entity);
-					mAdapter.notifyDataSetChanged();
-					mListView.setSelection(mListView.getCount() - 1);
-					rcChat_popup.setVisibility(View.GONE);
+
+					UpdateVoice(Utils.SendTitle, voiceName, false, time);
 				}
 
 				return false;
@@ -259,6 +268,29 @@ public class GroupActivity extends Activity implements OnClickListener {
 		volume.setImageResource(R.drawable.amp1);
 	}
 
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if (!MyListenerIsRegistered) {
+			registerReceiver(listener, new IntentFilter(
+					"com.fleet.chat.group_notice"));
+			MyListenerIsRegistered = true;
+		}
+
+	}
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if (MyListenerIsRegistered) {
+			unregisterReceiver(listener);
+			MyListenerIsRegistered = false;
+		}
+
+	}
+
 	private Runnable mSleepTask = new Runnable() {
 		public void run() {
 			stop();
@@ -297,16 +329,8 @@ public class GroupActivity extends Activity implements OnClickListener {
 			Toast.makeText(getApplicationContext(), "发送内容不能为空",
 					Toast.LENGTH_LONG).show();
 		} else {
-			ChatMsgEntity entity = new ChatMsgEntity();
-			entity.setDate(getDate());
-			entity.setName("Leader");
-			entity.setMsgType(false);
-			entity.setText(contString);
-
-			mDataArrays.add(entity);
-			mAdapter.notifyDataSetChanged();
+			UpdateMsg(Utils.SendTitle, contString, false);
 			mEditTextContent.setText("");
-			mListView.setSelection(mListView.getCount() - 1);
 		}
 	}
 
@@ -315,7 +339,7 @@ public class GroupActivity extends Activity implements OnClickListener {
 		intent.putExtra("picName", picName);
 		startActivity(intent);
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
@@ -323,7 +347,7 @@ public class GroupActivity extends Activity implements OnClickListener {
 		switch (resultCode) {
 		case RESULT_OK:
 			String picName = data.getStringExtra("picName");
-			UpdateCamera(picName);
+			UpdatePhoto(Utils.SendTitle, picName, false);
 			break;
 
 		default:
@@ -336,16 +360,53 @@ public class GroupActivity extends Activity implements OnClickListener {
 		intent.setClass(this, CameraActivity.class);
 		startActivityForResult(intent, 0);
 	}
-	
-	public void UpdateCamera(String cameraName) {
+
+	public void UpdateMsg(String name, String contString, boolean msgType) {
 		ChatMsgEntity entity = new ChatMsgEntity();
 		entity.setDate(getDate());
-		entity.setName("Leader");
-		entity.setMsgType(false);
-		entity.setText(cameraName);
+		entity.setName(name);
+		entity.setMsgType(msgType);
+		entity.setText(contString);
+
 		mDataArrays.add(entity);
 		mAdapter.notifyDataSetChanged();
 		mListView.setSelection(mListView.getCount() - 1);
+	}
+
+	public void UpdateVoice(String name, String voiceName, boolean msgType,
+			int time) {
+		ChatMsgEntity entity = new ChatMsgEntity();
+		entity.setDate(getDate());
+		entity.setName(name);
+		entity.setMsgType(msgType);
+		entity.setTime(time + "\"");
+		entity.setText(voiceName);
+		mDataArrays.add(entity);
+		mAdapter.notifyDataSetChanged();
+		mListView.setSelection(mListView.getCount() - 1);
+		rcChat_popup.setVisibility(View.GONE);
+	}
+
+	public void UpdatePhoto(String name, String photoName, boolean msgType) {
+		ChatMsgEntity entity = new ChatMsgEntity();
+		entity.setDate(getDate());
+		entity.setName(name);
+		entity.setMsgType(msgType);
+		entity.setText(photoName);
+		mDataArrays.add(entity);
+		mAdapter.notifyDataSetChanged();
+		mListView.setSelection(mListView.getCount() - 1);
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		// TODO Auto-generated method stub
+		if (Utils.intentSign) {
+			UpdateMsg(Utils.deliverMsg.getSrc_tag(),
+					Utils.deliverMsg.getContent(), true);
+			Utils.intentSign = false;
+		}
+		super.onNewIntent(intent);
 	}
 
 	@Override
@@ -365,5 +426,21 @@ public class GroupActivity extends Activity implements OnClickListener {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	// Listener Class
+	protected class MyListener extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			Toast.makeText(getApplicationContext(),"Form"+ intent.getAction(),
+					Toast.LENGTH_LONG).show();
+			if (intent.getAction().equals("com.fleet.chat.group_notice")) {
+				UpdateMsg(Utils.deliverMsg.getSrc_tag(),
+						Utils.deliverMsg.getContent(), true);
+			}
+		}
+
 	}
 }

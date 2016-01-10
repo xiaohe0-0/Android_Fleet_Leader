@@ -9,6 +9,7 @@ import com.fleet.chat.R.layout;
 import com.fleet.domain.ChatMsgEntity;
 import com.fleet.domain.ChatMsgViewAdapter;
 import com.fleet.function.SoundMeter;
+import com.fleet.utils.Utils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -178,16 +179,8 @@ public class BroadcastActivity extends Activity implements OnClickListener {
 						}, 500);
 						return false;
 					}
-					ChatMsgEntity entity = new ChatMsgEntity();
-					entity.setDate(getDate());
-					entity.setName("Leader");
-					entity.setMsgType(false);
-					entity.setTime(time + "\"");
-					entity.setText(voiceName);
-					mDataArrays.add(entity);
-					mAdapter.notifyDataSetChanged();
-					mListView.setSelection(mListView.getCount() - 1);
-					rcChat_popup.setVisibility(View.GONE);
+
+					UpdateVoice(Utils.SendTitle, voiceName, false, time);
 				}
 
 				return false;
@@ -293,16 +286,8 @@ public class BroadcastActivity extends Activity implements OnClickListener {
 			Toast.makeText(getApplicationContext(), "发送内容不能为空",
 					Toast.LENGTH_LONG).show();
 		} else {
-			ChatMsgEntity entity = new ChatMsgEntity();
-			entity.setDate(getDate());
-			entity.setName("Leader");
-			entity.setMsgType(false);
-			entity.setText(contString);
-
-			mDataArrays.add(entity);
-			mAdapter.notifyDataSetChanged();
+			UpdateMsg(Utils.SendTitle, contString, false);
 			mEditTextContent.setText("");
-			mListView.setSelection(mListView.getCount() - 1);
 		}
 	}
 
@@ -319,7 +304,7 @@ public class BroadcastActivity extends Activity implements OnClickListener {
 		switch (resultCode) {
 		case RESULT_OK:
 			String picName = data.getStringExtra("picName");
-			UpdateCamera(picName);
+			UpdatePhoto(Utils.SendTitle, picName, false);
 			break;
 
 		default:
@@ -333,12 +318,38 @@ public class BroadcastActivity extends Activity implements OnClickListener {
 		startActivityForResult(intent, 0);
 	}
 
-	public void UpdateCamera(String cameraName) {
+	public void UpdateMsg(String name, String contString, boolean msgType) {
 		ChatMsgEntity entity = new ChatMsgEntity();
 		entity.setDate(getDate());
-		entity.setName("Leader");
-		entity.setMsgType(false);
-		entity.setText(cameraName);
+		entity.setName(name);
+		entity.setMsgType(msgType);
+		entity.setText(contString);
+
+		mDataArrays.add(entity);
+		mAdapter.notifyDataSetChanged();
+		mListView.setSelection(mListView.getCount() - 1);
+	}
+
+	public void UpdateVoice(String name, String voiceName, boolean msgType,
+			int time) {
+		ChatMsgEntity entity = new ChatMsgEntity();
+		entity.setDate(getDate());
+		entity.setName(name);
+		entity.setMsgType(msgType);
+		entity.setTime(time + "\"");
+		entity.setText(voiceName);
+		mDataArrays.add(entity);
+		mAdapter.notifyDataSetChanged();
+		mListView.setSelection(mListView.getCount() - 1);
+		rcChat_popup.setVisibility(View.GONE);
+	}
+
+	public void UpdatePhoto(String name, String photoName, boolean msgType) {
+		ChatMsgEntity entity = new ChatMsgEntity();
+		entity.setDate(getDate());
+		entity.setName(name);
+		entity.setMsgType(msgType);
+		entity.setText(photoName);
 		mDataArrays.add(entity);
 		mAdapter.notifyDataSetChanged();
 		mListView.setSelection(mListView.getCount() - 1);
