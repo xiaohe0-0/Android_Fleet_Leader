@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,21 +66,35 @@ public class GroupActivity extends Activity implements OnClickListener {
 	// 常量
 	private static final int POLL_INTERVAL = 300;
 
-	// Listener
-	private MyListener listener = null;
-	private Boolean MyListenerIsRegistered = false;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group);
 		
-		listener = new MyListener();
-		registerReceiver(listener, new IntentFilter(
-				"com.fleet.chat.group_notice"));
 
 		initView();// 初始化界面
-		
+		initData();//初始化数据
+	}
+
+	private void initData() {
+		// TODO Auto-generated method stub
+		Utils.mhHandler_group = new Handler(){
+			@Override
+			public void handleMessage(Message msg) {
+				// TODO Auto-generated method stub
+				switch (msg.what) {
+				case 0:
+					Toast.makeText(getApplicationContext(), "Receive Msg From "+Utils.deliverMsg.getSrc_tag(),
+							Toast.LENGTH_LONG).show();
+					UpdateMsg(Utils.deliverMsg.getSrc_tag(), Utils.deliverMsg.getContent(), true);
+					break;
+
+				default:
+					break;
+				}
+				super.handleMessage(msg);
+			}
+		};
 	}
 
 	private void initView() {
@@ -272,11 +287,6 @@ public class GroupActivity extends Activity implements OnClickListener {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		if (!MyListenerIsRegistered) {
-			registerReceiver(listener, new IntentFilter(
-					"com.fleet.chat.group_notice"));
-			MyListenerIsRegistered = true;
-		}
 
 	}
 
@@ -284,10 +294,6 @@ public class GroupActivity extends Activity implements OnClickListener {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		if (MyListenerIsRegistered) {
-			unregisterReceiver(listener);
-			MyListenerIsRegistered = false;
-		}
 
 	}
 
@@ -426,21 +432,5 @@ public class GroupActivity extends Activity implements OnClickListener {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	// Listener Class
-	protected class MyListener extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			Toast.makeText(getApplicationContext(),"Form"+ intent.getAction(),
-					Toast.LENGTH_LONG).show();
-			if (intent.getAction().equals("com.fleet.chat.group_notice")) {
-				UpdateMsg(Utils.deliverMsg.getSrc_tag(),
-						Utils.deliverMsg.getContent(), true);
-			}
-		}
-
 	}
 }

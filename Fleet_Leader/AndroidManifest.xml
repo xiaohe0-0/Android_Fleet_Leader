@@ -91,11 +91,6 @@
             android:name="com.fleet.activity.GroupActivity"
             android:label="@string/title_activity_group"
             android:launchMode="singleTask" >
-            <intent-filter>
-                <action android:name="com.fleet.chat.group_notice" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.fleet.activity.ShowPicActivity"

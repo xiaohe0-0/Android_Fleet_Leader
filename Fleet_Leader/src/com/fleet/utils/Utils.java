@@ -1,5 +1,7 @@
 package com.fleet.utils;
 
+import android.os.Handler;
+
 import com.fleet.domain.*;
 
 public class Utils {
@@ -18,4 +20,5 @@ public class Utils {
 	public static DeliverMsg deliverMsg;
 	public static boolean intentSign = false;
 	public static final String SendTitle = "Leader";
+	public static Handler mhHandler_group = new Handler();
 }

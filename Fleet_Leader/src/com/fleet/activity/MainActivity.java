@@ -24,7 +24,7 @@ import com.fleet.utils.Utils;
 @SuppressWarnings("deprecation")
 public class MainActivity extends TabActivity {
 	/** Called when the activity is first created. */
-	private Intent intent_map,intent_group,intent_broad;
+	private Intent intent_map, intent_group, intent_broad;
 	private TabHost.TabSpec tabSpec;
 	private Vibrator vibrator;
 
@@ -74,6 +74,8 @@ public class MainActivity extends TabActivity {
 		tabHost.addTab(tabSpec);
 
 		tabHost.setCurrentTab(0);// 设置当期的tab页，从0开始偏移
+		tabHost.setCurrentTab(2);// 激活一下GroupActivity 否则默认接收不到数据
+		tabHost.setCurrentTab(0);
 
 		// 绑定百度推送服务
 		new Thread() {
@@ -102,14 +104,21 @@ public class MainActivity extends TabActivity {
 
 			} else if (Utils.deliverMsg.getSrc_tag().equals("")) {
 				if (!Utils.logString.equals("")) {// 系统提醒消息 如绑定信息
-					// 震动手机
-					long pattern = 300;
-					vibrator.vibrate(pattern);
+
 					Toast.makeText(getApplicationContext(), Utils.logString,
 							Toast.LENGTH_LONG).show();
 				}
 			} else if (Utils.deliverMsg.getSrc_tag().contains("group")) {// 群组消息
-				startActivity(intent_group);
+
+				if (Utils.mhHandler_group != null) {
+					// 震动手机
+					long pattern = 300;
+					vibrator.vibrate(pattern);
+					Utils.mhHandler_group.sendEmptyMessage(0);
+				} else {
+					Toast.makeText(getApplicationContext(), "No Handler",
+							Toast.LENGTH_LONG).show();
+				}
 			}
 
 		}
