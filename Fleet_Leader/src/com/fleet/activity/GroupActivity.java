@@ -4,8 +4,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.fleet.function.*;
+import com.fleet.utils.HttpUtils;
+import com.fleet.utils.ImageUtil;
 import com.fleet.utils.Utils;
+import com.fleet.utils.FileUtil;
 import com.fleet.chat.R;
 import com.fleet.domain.*;
 
@@ -55,6 +63,8 @@ public class GroupActivity extends Activity implements OnClickListener {
 
 	// 变量
 	private Handler mHandler = new Handler();
+	private Handler mHandler_send;
+	private Handler pic_hdl;
 	private long startVoiceT, endVoiceT;
 	private SoundMeter mSensor;
 	private String voiceName;
@@ -62,31 +72,54 @@ public class GroupActivity extends Activity implements OnClickListener {
 	private ChatMsgViewAdapter mAdapter;
 	private int flag = 1;
 	private boolean isShosrt = false;
+	private String contString;
+	private String postStr;
 
 	// 常量
 	private static final int POLL_INTERVAL = 300;
+	private final String msgPre = "push_message";// 解析接收到的消息时的前缀
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_group);
-		
 
 		initView();// 初始化界面
-		initData();//初始化数据
+		initData();// 初始化数据
 	}
 
 	private void initData() {
 		// TODO Auto-generated method stub
-		Utils.mhHandler_group = new Handler(){
+		pic_hdl = new PicHandler();
+		Utils.mhHandler_group = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
 				// TODO Auto-generated method stub
 				switch (msg.what) {
 				case 0:
-					Toast.makeText(getApplicationContext(), "Receive Msg From "+Utils.deliverMsg.getSrc_tag(),
+					Toast.makeText(
+							getApplicationContext(),
+							"Receive Msg From " + Utils.deliverMsg.getSrc_tag(),
 							Toast.LENGTH_LONG).show();
-					UpdateMsg(Utils.deliverMsg.getSrc_tag(), Utils.deliverMsg.getContent(), true);
+					UpdateMsg(Utils.deliverMsg.getSrc_tag(),
+							Utils.deliverMsg.getContent(), true);
+					break;
+
+				default:
+					break;
+				}
+				super.handleMessage(msg);
+			}
+		};
+
+		mHandler_send = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				// TODO Auto-generated method stub
+				switch (msg.what) {
+				case 0:
+					Toast.makeText(getApplicationContext(), postStr,
+							Toast.LENGTH_LONG).show();
 					break;
 
 				default:
@@ -330,13 +363,53 @@ public class GroupActivity extends Activity implements OnClickListener {
 
 	private void send() {
 		// TODO Auto-generated method stub
-		String contString = mEditTextContent.getText().toString().trim();
+		contString = mEditTextContent.getText().toString().trim();
 		if (contString.length() < 1) {
 			Toast.makeText(getApplicationContext(), "发送内容不能为空",
 					Toast.LENGTH_LONG).show();
 		} else {
 			UpdateMsg(Utils.SendTitle, contString, false);
 			mEditTextContent.setText("");
+
+			new Thread() {
+				public void run() {
+					JSONObject jsonObject1 = new JSONObject();// push_message消息内容
+					List<NameValuePair> params = new ArrayList<NameValuePair>();// push_message消息实体
+
+					// 添加消息内容
+					try {
+						jsonObject1.put("message_type", "text");
+						jsonObject1.put("src_tag", Utils.MyTag);
+						jsonObject1.put("src_id", Utils.MyChannelId);
+						jsonObject1.put("attr", "common");
+						jsonObject1.put("location", "");
+						jsonObject1.put("push_type", "2");
+						jsonObject1.put("tag_name", "group" + "2");
+						jsonObject1.put("content", contString);
+						jsonObject1.put("user_id", Utils.MyUserID);
+						params.add(new BasicNameValuePair(msgPre, jsonObject1
+								.toString()));// 封装消息实体
+						String resFromServer = HttpUtils.PostData(params);
+						if (!resFromServer.equals("200")) {
+							postStr = "Send Failed";
+							mHandler_send.sendEmptyMessage(0);
+
+						} else {
+							postStr = resFromServer;
+							mHandler_send.sendEmptyMessage(0);
+						}
+					} catch (JSONException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+						postStr = e2.toString();
+						mHandler_send.sendEmptyMessage(0);
+					} catch (Exception e) {
+						// TODO: handle exception
+						postStr = e.toString();
+						mHandler_send.sendEmptyMessage(0);
+					}
+				};
+			}.start();
 		}
 	}
 
@@ -363,6 +436,7 @@ public class GroupActivity extends Activity implements OnClickListener {
 
 	private void ShowCamera() {
 		Intent intent = new Intent();
+		intent.putExtra("activityfrom", "group");
 		intent.setClass(this, CameraActivity.class);
 		startActivityForResult(intent, 0);
 	}
@@ -408,11 +482,37 @@ public class GroupActivity extends Activity implements OnClickListener {
 	protected void onNewIntent(Intent intent) {
 		// TODO Auto-generated method stub
 		if (Utils.intentSign) {
-			UpdateMsg(Utils.deliverMsg.getSrc_tag(),
-					Utils.deliverMsg.getContent(), true);
+			if (Utils.deliverMsg.getMessage_type().equals("text")) {
+				UpdateMsg(Utils.deliverMsg.getSrc_tag(),
+						Utils.deliverMsg.getContent(), true);
+			}
+			else if (Utils.deliverMsg.getMessage_type().equals("picture")) {
+				new Thread(){
+					public void run() {
+						Bitmap img = ImageUtil.getUrlImage(Utils.deliverMsg.getContent());
+				        Message msg = pic_hdl.obtainMessage();
+				        msg.what = 0;
+				        msg.obj = img;
+				        pic_hdl.sendMessage(msg); 
+					};
+				}.start();
+			}
 			Utils.intentSign = false;
 		}
 		super.onNewIntent(intent);
+	}
+	
+	class PicHandler extends Handler{
+	    @Override
+	    public void handleMessage(Message msg) {
+	        // TODO Auto-generated method stub
+	        //String s = (String)msg.obj;
+	        //ptv.setText(s);
+	        Bitmap myimg = (Bitmap)msg.obj;
+	        String photoName = FileUtil.saveBitmap(myimg);
+	        UpdatePhoto(Utils.deliverMsg.getSrc_tag(), photoName, true);
+	        
+	    }
 	}
 
 	@Override

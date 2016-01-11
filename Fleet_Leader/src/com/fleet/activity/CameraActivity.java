@@ -7,6 +7,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
@@ -60,12 +61,14 @@ public class CameraActivity extends Activity {
 	private String infoStr = "";
 	private Intent intent;
 	private String picName = "";
+	private String activityfrom;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera);
 		intent = getIntent();
+		activityfrom = intent.getStringExtra("activityfrom");
 
 		// 获取窗口管理器
 		WindowManager wm = getWindowManager();
@@ -258,8 +261,22 @@ public class CameraActivity extends Activity {
 					// sending a Image;
 					// note here, that you can send more than one image, just
 					// add another param, same rule to the String;
+					if(activityfrom.equals("group")){
+						entity.addPart("push_type",new StringBody("2"));
+						entity.addPart("tag_name",new StringBody("group2"));
+					}
+					else if(activityfrom.equals("broad")){
+						entity.addPart("push_type",new StringBody("3"));
+						entity.addPart("tag_name",new StringBody(""));
+					}
 
-					entity.addPart("picture", new ByteArrayBody(data,
+					entity.addPart("message_type",new StringBody("picture"));
+					entity.addPart("src_tag",new StringBody(Utils.MyTag));
+					entity.addPart("src_id",new StringBody(Utils.MyChannelId));
+					entity.addPart("user_id",new StringBody(Utils.MyUserID));
+					entity.addPart("attr",new StringBody("common"));
+					entity.addPart("location",new StringBody(""));					
+					entity.addPart("content", new ByteArrayBody(data,
 							"temp.jpg"));
 					// entity.addPart("longitude", new StringBody(lng));
 					// entity.addPart("latitude", new StringBody(lat));

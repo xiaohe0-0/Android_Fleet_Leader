@@ -126,6 +126,12 @@ public class MainActivity extends TabActivity {
 	}
 
 	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		vibrator.cancel();
+		super.onStop();
+	}
+	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();

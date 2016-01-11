@@ -4,11 +4,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.fleet.chat.R;
 import com.fleet.chat.R.layout;
 import com.fleet.domain.ChatMsgEntity;
 import com.fleet.domain.ChatMsgViewAdapter;
 import com.fleet.function.SoundMeter;
+import com.fleet.utils.HttpUtils;
 import com.fleet.utils.Utils;
 
 import android.app.Activity;
@@ -16,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,18 +38,22 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class BroadcastActivity extends Activity implements OnClickListener {
+	// 控件
 	private ImageView chatting_mode_text, chatting_mode_voice,
 			chatting_mode_camera, volume;
 	private ListView mListView;
 	private Button mBtnRcd, mBtnSend;
 	private EditText mEditTextContent;
-	private Handler mHandler = new Handler();
 	private RelativeLayout mBottom;
 	private View rcChat_popup;
 	private LinearLayout voice_rcd_hint_loading, voice_rcd_hint_rcding,
 			voice_rcd_hint_tooshort;
 	private ImageView img1;
 	private LinearLayout del_re;
+
+	// 变量
+	private Handler mHandler = new Handler();
+	private Handler mHandler_send;
 	private long startVoiceT, endVoiceT;
 	private SoundMeter mSensor;
 	private String voiceName;
@@ -50,13 +61,39 @@ public class BroadcastActivity extends Activity implements OnClickListener {
 	private ChatMsgViewAdapter mAdapter;
 	private int flag = 1;
 	private boolean isShosrt = false;
+	private String contString;
+	private String postStr;
+
+	// 常量
 	private static final int POLL_INTERVAL = 300;
+	private final String msgPre = "push_message";// 解析接收到的消息时的前缀
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_broadcast);
 		initView();// 初始化界面
+		initData();// 初始化数据
+	}
+
+	private void initData() {
+		// TODO Auto-generated method stub
+		mHandler_send = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				// TODO Auto-generated method stub
+				switch (msg.what) {
+				case 0:
+					Toast.makeText(getApplicationContext(), postStr,
+							Toast.LENGTH_LONG).show();
+					break;
+
+				default:
+					break;
+				}
+				super.handleMessage(msg);
+			}
+		};
 	}
 
 	private void initView() {
@@ -281,13 +318,49 @@ public class BroadcastActivity extends Activity implements OnClickListener {
 
 	private void send() {
 		// TODO Auto-generated method stub
-		String contString = mEditTextContent.getText().toString().trim();
+		contString = mEditTextContent.getText().toString().trim();
 		if (contString.length() < 1) {
 			Toast.makeText(getApplicationContext(), "发送内容不能为空",
 					Toast.LENGTH_LONG).show();
 		} else {
 			UpdateMsg(Utils.SendTitle, contString, false);
 			mEditTextContent.setText("");
+
+			new Thread() {
+				public void run() {
+					JSONObject jsonObject1 = new JSONObject();// push_message消息内容
+					List<NameValuePair> params = new ArrayList<NameValuePair>();// push_message消息实体
+					// 添加消息内容
+					try {
+						jsonObject1.put("message_type", "text");
+						jsonObject1.put("src_tag", Utils.MyTag);
+						jsonObject1.put("src_id", Utils.MyChannelId);
+						jsonObject1.put("attr", "common");
+						jsonObject1.put("location", "");
+						jsonObject1.put("push_type", "3");
+						jsonObject1.put("tag_name", "");
+						jsonObject1.put("content", contString);
+						jsonObject1.put("user_id", Utils.MyUserID);
+						params.add(new BasicNameValuePair(msgPre, jsonObject1
+								.toString()));// 封装消息实体
+						String resFromServer = HttpUtils.PostData(params);
+						if (!resFromServer.equals("200")) {
+							postStr = "Send Failed" + resFromServer;
+							mHandler_send.sendEmptyMessage(0);
+						}
+					} catch (JSONException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+						postStr = e2.toString();
+						mHandler_send.sendEmptyMessage(0);
+					} catch (Exception e) {
+						// TODO: handle exception
+						postStr = e.toString();
+						mHandler_send.sendEmptyMessage(0);
+					}
+				};
+
+			}.start();
 		}
 	}
 
@@ -314,6 +387,7 @@ public class BroadcastActivity extends Activity implements OnClickListener {
 
 	private void ShowCamera() {
 		Intent intent = new Intent();
+		intent.putExtra("activityfrom", "broad");
 		intent.setClass(this, CameraActivity.class);
 		startActivityForResult(intent, 0);
 	}
