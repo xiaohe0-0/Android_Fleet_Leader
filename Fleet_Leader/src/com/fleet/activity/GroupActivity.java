@@ -1,10 +1,20 @@
 package com.fleet.activity;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +47,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import android.R.integer;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -64,10 +75,11 @@ public class GroupActivity extends Activity implements OnClickListener {
 	// 变量
 	private Handler mHandler = new Handler();
 	private Handler mHandler_send;
-	private Handler pic_hdl;
+	private Handler pic_hdl,voice_hdl;
 	private long startVoiceT, endVoiceT;
 	private SoundMeter mSensor;
 	private String voiceName;
+	private int voice_time;
 	private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
 	private ChatMsgViewAdapter mAdapter;
 	private int flag = 1;
@@ -91,6 +103,7 @@ public class GroupActivity extends Activity implements OnClickListener {
 	private void initData() {
 		// TODO Auto-generated method stub
 		pic_hdl = new PicHandler();
+		voice_hdl = new VoiceHandler();
 		Utils.mhHandler_group = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -101,8 +114,42 @@ public class GroupActivity extends Activity implements OnClickListener {
 							getApplicationContext(),
 							"Receive Msg From " + Utils.deliverMsg.getSrc_tag(),
 							Toast.LENGTH_LONG).show();
-					UpdateMsg(Utils.deliverMsg.getSrc_tag(),
-							Utils.deliverMsg.getContent(), true);
+					if (Utils.deliverMsg.getMessage_type().equals("text")) {
+						UpdateMsg(Utils.deliverMsg.getSrc_tag(),
+								Utils.deliverMsg.getContent(), true);
+					} else if (Utils.deliverMsg.getMessage_type().equals(
+							"picture")) {
+						Toast.makeText(getApplicationContext(),
+								Utils.deliverMsg.getContent(),
+								Toast.LENGTH_LONG).show();
+						new Thread() {
+							public void run() {
+								Bitmap img = ImageUtil
+										.getUrlImage(Utils.deliverMsg
+												.getContent());
+								Message msg = pic_hdl.obtainMessage();
+								msg.what = 0;
+								msg.obj = img;
+								pic_hdl.sendMessage(msg);
+							};
+						}.start();
+					}
+					else if (Utils.deliverMsg.getMessage_type().equals("voice")) {
+						Toast.makeText(getApplicationContext(),
+								Utils.deliverMsg.getContent(),
+								Toast.LENGTH_LONG).show();
+						new Thread(){
+							public void run() {
+								InputStream is = FileUtil.getUrlVoice(Utils.deliverMsg.getContent());
+								Message msg = voice_hdl.obtainMessage();
+								msg.what = 0;
+								msg.obj = is;
+								voice_hdl.sendMessage(msg);								
+							};
+						}.start();
+						
+						
+					}
 					break;
 
 				default:
@@ -248,8 +295,63 @@ public class GroupActivity extends Activity implements OnClickListener {
 						}, 500);
 						return false;
 					}
+					voice_time = time;
 
-					UpdateVoice(Utils.SendTitle, voiceName, false, time);
+					UpdateVoice(Utils.SendTitle, voiceName, false, voice_time);
+					new Thread() {
+						public void run() {
+							HttpClient httpclient = new DefaultHttpClient();
+							try {
+
+								HttpPost httppost = new HttpPost(
+										Utils.upload_voice_ip);
+
+								MultipartEntity entity = new MultipartEntity();
+								// 文件流读取文件
+								FileInputStream fin = new FileInputStream(
+										Utils.savePath_voice + voiceName);
+								// 获得字符长度
+								int length = fin.available();
+								// 创建字节数组
+								byte[] data = new byte[length];
+								// 把字节流读入数组中
+								fin.read(data);
+								// 关闭文件流
+								fin.close();
+
+								entity.addPart("content", new ByteArrayBody(data,
+										"temp.amr"));
+								entity.addPart("message_type",new StringBody("voice"));
+								entity.addPart("src_tag",new StringBody(Utils.MyTag));
+								entity.addPart("src_id",new StringBody(Utils.MyUserID));
+								entity.addPart("user_id",new StringBody(Utils.MyUserID));
+								entity.addPart("attr",new StringBody("common"));
+								entity.addPart("location",new StringBody(voice_time+""));
+								entity.addPart("push_type",new StringBody("2"));
+								entity.addPart("tag_name",new StringBody("group2"));
+								
+								
+								httppost.setEntity(entity);
+								HttpResponse response = httpclient
+										.execute(httppost);
+								postStr = response.getStatusLine()
+										.getStatusCode() + "";
+								mHandler_send.sendEmptyMessage(0);
+
+								postStr = Utils.upload_voice_ip;
+								mHandler_send.sendEmptyMessage(0);
+
+								if (response.getStatusLine().getStatusCode() != 200) {
+									postStr = response.getStatusLine().getStatusCode()+"";
+									mHandler_send.sendEmptyMessage(0);
+								}
+
+							} catch (Exception e) {
+
+								e.printStackTrace();
+							}
+						};
+					}.start();
 				}
 
 				return false;
@@ -478,41 +580,35 @@ public class GroupActivity extends Activity implements OnClickListener {
 		mListView.setSelection(mListView.getCount() - 1);
 	}
 
-	@Override
-	protected void onNewIntent(Intent intent) {
-		// TODO Auto-generated method stub
-		if (Utils.intentSign) {
-			if (Utils.deliverMsg.getMessage_type().equals("text")) {
-				UpdateMsg(Utils.deliverMsg.getSrc_tag(),
-						Utils.deliverMsg.getContent(), true);
+	class PicHandler extends Handler {
+		@Override
+		public void handleMessage(Message msg) {
+			// TODO Auto-generated method stub
+			// String s = (String)msg.obj;
+			// ptv.setText(s);
+			Bitmap myimg = (Bitmap) msg.obj;
+			if (myimg != null) {
+				String photoName = FileUtil.saveBitmap(myimg);
+				UpdatePhoto(Utils.deliverMsg.getSrc_tag(), photoName, true);
 			}
-			else if (Utils.deliverMsg.getMessage_type().equals("picture")) {
-				new Thread(){
-					public void run() {
-						Bitmap img = ImageUtil.getUrlImage(Utils.deliverMsg.getContent());
-				        Message msg = pic_hdl.obtainMessage();
-				        msg.what = 0;
-				        msg.obj = img;
-				        pic_hdl.sendMessage(msg); 
-					};
-				}.start();
-			}
-			Utils.intentSign = false;
 		}
-		super.onNewIntent(intent);
 	}
 	
-	class PicHandler extends Handler{
-	    @Override
-	    public void handleMessage(Message msg) {
-	        // TODO Auto-generated method stub
-	        //String s = (String)msg.obj;
-	        //ptv.setText(s);
-	        Bitmap myimg = (Bitmap)msg.obj;
-	        String photoName = FileUtil.saveBitmap(myimg);
-	        UpdatePhoto(Utils.deliverMsg.getSrc_tag(), photoName, true);
-	        
-	    }
+	class VoiceHandler extends Handler{
+		@Override
+		public void handleMessage(Message msg) {
+			// TODO Auto-generated method stub
+			InputStream iStream = (InputStream)msg.obj;
+			if(iStream != null){
+				String voieName = FileUtil.saveVoice(iStream);
+				try {
+					UpdateVoice(Utils.deliverMsg.getSrc_tag(), voieName, true, Integer.parseInt(Utils.deliverMsg.getLocation()));
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
+			}
+		}
 	}
 
 	@Override

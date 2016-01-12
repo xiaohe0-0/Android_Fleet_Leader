@@ -36,7 +36,7 @@ public class ImageUtil {
 			conn.setDoInput(true);
 			conn.setUseCaches(false);// 不缓存
 			conn.connect();
-			InputStream is = conn.getInputStream();// 获得图片的数据流
+			InputStream is = conn.getInputStream();// 获得语音的数据流
 			img = BitmapFactory.decodeStream(is);
 
 			is.close();
