@@ -50,7 +50,7 @@ public class FileUtil {
 
 		String path = initPath();
 		long dataTake = System.currentTimeMillis();
-		String jpegName = path + "/" + dataTake + ".jpg";
+		String jpegName = path + dataTake + ".jpg";
 		try {
 			FileOutputStream fout = new FileOutputStream(jpegName);
 			BufferedOutputStream bos = new BufferedOutputStream(fout);
@@ -74,12 +74,8 @@ public class FileUtil {
 			HttpURLConnection conn = (HttpURLConnection) voiceurl
 					.openConnection();
 			conn.setConnectTimeout(6000);// 设置超时
-			conn.setDoInput(true);
-			conn.setUseCaches(false);// 不缓存
-			conn.connect();
-			is = conn.getInputStream();// 获得图片的数据流
-
-			is.close();
+			conn.setRequestMethod("GET");// 获得
+			is = conn.getInputStream();// 获得数据流
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

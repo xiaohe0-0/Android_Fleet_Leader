@@ -75,10 +75,11 @@ public class GroupActivity extends Activity implements OnClickListener {
 	// 变量
 	private Handler mHandler = new Handler();
 	private Handler mHandler_send;
-	private Handler pic_hdl,voice_hdl;
+	private Handler pic_hdl, voice_hdl;
 	private long startVoiceT, endVoiceT;
 	private SoundMeter mSensor;
 	private String voiceName;
+	private String getVoiceName;
 	private int voice_time;
 	private List<ChatMsgEntity> mDataArrays = new ArrayList<ChatMsgEntity>();
 	private ChatMsgViewAdapter mAdapter;
@@ -133,22 +134,24 @@ public class GroupActivity extends Activity implements OnClickListener {
 								pic_hdl.sendMessage(msg);
 							};
 						}.start();
-					}
-					else if (Utils.deliverMsg.getMessage_type().equals("voice")) {
+					} else if (Utils.deliverMsg.getMessage_type().equals(
+							"voice")) {
 						Toast.makeText(getApplicationContext(),
 								Utils.deliverMsg.getContent(),
 								Toast.LENGTH_LONG).show();
-						new Thread(){
+						new Thread() {
 							public void run() {
-								InputStream is = FileUtil.getUrlVoice(Utils.deliverMsg.getContent());
+								InputStream is = FileUtil
+										.getUrlVoice(Utils.deliverMsg
+												.getContent());
+								//getVoiceName = FileUtil.saveVoice(is);
 								Message msg = voice_hdl.obtainMessage();
 								msg.what = 0;
-								msg.obj = is;
-								voice_hdl.sendMessage(msg);								
+								// msg.obj = is;
+								voice_hdl.sendMessage(msg);
 							};
 						}.start();
-						
-						
+
 					}
 					break;
 
@@ -319,18 +322,23 @@ public class GroupActivity extends Activity implements OnClickListener {
 								// 关闭文件流
 								fin.close();
 
-								entity.addPart("content", new ByteArrayBody(data,
-										"temp.amr"));
-								entity.addPart("message_type",new StringBody("voice"));
-								entity.addPart("src_tag",new StringBody(Utils.MyTag));
-								entity.addPart("src_id",new StringBody(Utils.MyUserID));
-								entity.addPart("user_id",new StringBody(Utils.MyUserID));
-								entity.addPart("attr",new StringBody("common"));
-								entity.addPart("location",new StringBody(voice_time+""));
-								entity.addPart("push_type",new StringBody("2"));
-								entity.addPart("tag_name",new StringBody("group2"));
-								
-								
+								entity.addPart("content", new ByteArrayBody(
+										data, "temp.amr"));
+								entity.addPart("message_type", new StringBody(
+										"voice"));
+								entity.addPart("src_tag", new StringBody(
+										Utils.MyTag));
+								entity.addPart("src_id", new StringBody(
+										Utils.MyUserID));
+								entity.addPart("user_id", new StringBody(
+										Utils.MyUserID));
+								entity.addPart("attr", new StringBody("common"));
+								entity.addPart("location", new StringBody(
+										voice_time + ""));
+								entity.addPart("push_type", new StringBody("2"));
+								entity.addPart("tag_name", new StringBody(
+										"group2"));
+
 								httppost.setEntity(entity);
 								HttpResponse response = httpclient
 										.execute(httppost);
@@ -342,7 +350,8 @@ public class GroupActivity extends Activity implements OnClickListener {
 								mHandler_send.sendEmptyMessage(0);
 
 								if (response.getStatusLine().getStatusCode() != 200) {
-									postStr = response.getStatusLine().getStatusCode()+"";
+									postStr = response.getStatusLine()
+											.getStatusCode() + "";
 									mHandler_send.sendEmptyMessage(0);
 								}
 
@@ -593,21 +602,18 @@ public class GroupActivity extends Activity implements OnClickListener {
 			}
 		}
 	}
-	
-	class VoiceHandler extends Handler{
+
+	class VoiceHandler extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
 			// TODO Auto-generated method stub
-			InputStream iStream = (InputStream)msg.obj;
-			if(iStream != null){
-				String voieName = FileUtil.saveVoice(iStream);
-				try {
-					UpdateVoice(Utils.deliverMsg.getSrc_tag(), voieName, true, Integer.parseInt(Utils.deliverMsg.getLocation()));
-				} catch (Exception e) {
-					// TODO: handle exception
-				}
-				
+			try {
+				UpdateVoice(Utils.deliverMsg.getSrc_tag(), getVoiceName, true,
+						Integer.parseInt(Utils.deliverMsg.getLocation()));
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
+
 		}
 	}
 
